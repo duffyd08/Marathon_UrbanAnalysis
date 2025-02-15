@@ -1,0 +1,144 @@
+---
+title: "ML Urban Analysis Project"
+author: "Drew Duffy"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+```
+
+# Data for Boston
+  - Last Marathon Date: April 15, 2024
+
+```{r Boston}
+
+all_boston <- readRDS("all_boston.rds")
+
+# calendar 
+# boscalendar <- read.csv("C://Users/Drew Duffy/Downloads/bostonmarathon_calendar.csv.gz")
+# 
+# boscalendar_clean <- boscalendar %>% 
+#   mutate(date = as.Date(date, format = "%Y-%m-%d"), 
+#          available = ifelse(available == "t", 1, 0), 
+#          price = as.numeric(gsub("[^0-9.]", "", price))) 
+# 
+# # listings 
+# boslistings <- read.csv("C://Users/Drew Duffy/Downloads/listings (2).csv.gz") %>% 
+#   rename(listing_id = id) %>% 
+#   select(-price, -maximum_nights, -minimum_nights)
+# 
+# 
+# all_boston <- merge(boscalendar_clean, boslistings, by = "listing_id")
+
+# saveRDS(all_boston, "all_boston.rds")
+
+```
+
+# Data for New York
+ - Last Marathon Date: November 3, 2024
+
+```{r New York}
+
+all_ny <- readRDS("all_ny.rds")
+
+# calendar 
+
+# nycalendar <- read.csv("C://Users/Drew Duffy/Downloads/nymarathoncal.csv.gz")
+# 
+# nycalendar_clean <- nycalendar %>%
+#   mutate(date = as.Date(date, format = "%Y-%m-%d"),
+#          available = ifelse(available == "t", 1, 0),
+#           price = as.numeric(gsub("[^0-9.]", "", price)))
+# #
+# # # listings
+# nylistings <- read.csv("C://Users/Drew Duffy/Downloads/ny_listings.csv.gz") %>%
+#   rename(listing_id = id) %>%
+#   select(-price, -maximum_nights, -minimum_nights)
+# 
+# all_ny <- merge(nycalendar_clean, nylistings, by = "listing_id")
+# 
+# saveRDS(all_ny, "all_ny.rds")
+
+```
+# Data for Chicago
+  - Last Marathon Date: October 13, 2024
+
+```{r Chicago}
+
+all_chicago <- readRDS("all_chicago.rds")
+
+# # calendar 
+# chicalendar <- read.csv("C://Users/Drew Duffy/Downloads/chicagomarathon_calendar.csv.gz")
+# # 
+# chicalendar_clean <- chicalendar %>% 
+#   mutate(date = as.Date(date, format = "%Y-%m-%d"), 
+#          available = ifelse(available == "t", 1, 0), 
+#           price = as.numeric(gsub("[^0-9.]", "", price))) 
+#  
+# # listings 
+# chilistings <- read.csv("C://Users/Drew Duffy/Downloads/chicagomarathon_listings.csv.gz") %>% 
+#   rename(listing_id = id) %>% 
+#   select(-price, -maximum_nights, -minimum_nights)
+# # 
+# all_chicago <- merge(chicalendar_clean, chilistings, by = "listing_id")
+# 
+# saveRDS(all_chicago, "all_chicago.rds")
+
+```
+
+# Data for San Francisco
+  - Last Marathon Date: July 28, 2024
+
+```{r San Fran}
+
+all_sf <- readRDS("all_sf.rds")
+
+# calendar 
+# sfcalendar <- read.csv("C://Users/Drew Duffy/Downloads/sfmarathon_calendar.csv.gz")
+# # 
+# sfcalendar_clean <- sfcalendar %>% 
+#   mutate(date = as.Date(date, format = "%Y-%m-%d"), 
+#          available = ifelse(available == "t", 1, 0), 
+#           price = as.numeric(gsub("[^0-9.]", "", price))) 
+#  
+# # listings 
+# sflistings <- read.csv("C://Users/Drew Duffy/Downloads/sfmarathon_listings.csv.gz") %>% 
+#   rename(listing_id = id) %>% 
+#   select(-price, -maximum_nights, -minimum_nights)
+# # 
+# all_sf <- merge(sfcalendar_clean, sflistings, by = "listing_id")
+# 
+# saveRDS(all_sf, "all_sf.rds")
+
+```
+
+
+# Data for Denver
+  - Last Marathon Date: May 19, 2024
+
+```{r Denver}
+all_denver <- readRDS("all_denver.rds")
+# calendar 
+# dencalendar <- read.csv("C://Users/Drew Duffy/Downloads/denvermarathon_calendar.csv.gz")
+# # 
+# dencalendar_clean <- dencalendar %>% 
+#   mutate(date = as.Date(date, format = "%Y-%m-%d"), 
+#          available = ifelse(available == "t", 1, 0), 
+#           price = as.numeric(gsub("[^0-9.]", "", price))) 
+#  
+# # listings 
+# denlistings <- read.csv("C://Users/Drew Duffy/Downloads/denvermarathon_listings.csv.gz") %>% 
+#   rename(listing_id = id) %>% 
+#   select(-price, -maximum_nights, -minimum_nights)
+# # 
+# all_denver <- merge(dencalendar_clean, denlistings, by = "listing_id")
+# 
+# saveRDS(all_denver, "all_denver.rds")
+
+```
