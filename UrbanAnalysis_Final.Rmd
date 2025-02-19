@@ -18,6 +18,10 @@ library(lubridate)
 
 ```{r Boston}
 
+# zip("allboston_rds.zip", "all_boston.rds")
+
+
+
 all_boston <- readRDS("all_boston.rds")
 
 # calendar 
@@ -36,7 +40,31 @@ all_boston <- readRDS("all_boston.rds")
 # 
 # all_boston <- merge(boscalendar_clean, boslistings, by = "listing_id")
 
-# saveRDS(all_boston, "all_boston.rds")
+# all_boston <- all_boston %>%
+#   select(
+#     listing_id, date, available, price, minimum_nights, maximum_nights, listing_url,
+#     name, description, neighborhood_overview, picture_url, host_id, host_url,
+#     host_name, host_since, host_location, host_about, host_response_time,
+#     host_response_rate, host_neighbourhood, host_listings_count,
+#     host_total_listings_count, neighbourhood, neighbourhood_cleansed,
+#     neighbourhood_group_cleansed, latitude, longitude, property_type, room_type,
+#     accommodates, bathrooms, bathrooms_text, bedrooms, beds, amenities,
+#     minimum_minimum_nights, maximum_minimum_nights, minimum_maximum_nights,
+#     maximum_maximum_nights, minimum_nights_avg_ntm, maximum_nights_avg_ntm,
+#     has_availability, availability_30, availability_60, availability_90,
+#     availability_365, number_of_reviews, review_scores_rating,
+#     review_scores_accuracy, review_scores_cleanliness, review_scores_checkin,
+#     review_scores_communication, review_scores_location, review_scores_value,
+#     reviews_per_month, marathon_week
+#   )
+
+# all_boston <- all_boston %>% 
+#   mutate(marathon_week = if_else(date >= ymd("2024-04-11") & date <= ymd("2024-04-18"), 1, 0))
+
+saveRDS(all_boston, "all_boston.rds")
+
+#zip("allboston_rds.zip", "all_boston.rds")
+
 
 ```
 
@@ -49,21 +77,50 @@ all_ny <- readRDS("all_ny.rds")
 
 # calendar 
 
-# nycalendar <- read.csv("C://Users/Drew Duffy/Downloads/nymarathoncal.csv.gz")
+# nycalendar <- read.csv("C://Users/Drew Duffy/Downloads/nycalendar_try.csv.gz")
 # 
 # nycalendar_clean <- nycalendar %>%
-#   mutate(date = as.Date(date, format = "%Y-%m-%d"),
-#          available = ifelse(available == "t", 1, 0),
-#           price = as.numeric(gsub("[^0-9.]", "", price)))
-# #
-# # # listings
-# nylistings <- read.csv("C://Users/Drew Duffy/Downloads/ny_listings.csv.gz") %>%
+#    mutate(date = as.Date(date, format = "%Y-%m-%d"),
+#           available = ifelse(available == "t", 1, 0),
+#            price = as.numeric(gsub("[^0-9.]", "", price)))
+#  #
+# # # # listings
+# nylistings <- read.csv("C://Users/Drew Duffy/Downloads/nylistings_try.csv.gz") %>%
 #   rename(listing_id = id) %>%
 #   select(-price, -maximum_nights, -minimum_nights)
-# 
+# # 
 # all_ny <- merge(nycalendar_clean, nylistings, by = "listing_id")
 # 
-# saveRDS(all_ny, "all_ny.rds")
+# all_ny_filter <- all_ny %>% 
+#   mutate(year = year(date)) %>% 
+#   filter(year == 2024, price >0) %>% 
+#   select(-license, -calculated_host_listings_count_shared_rooms, -calculated_host_listings_count_private_rooms, -calculated_host_listings_count_entire_homes, -neighborhood_overview, -host_about, -host_url, -host_response_time, -host_response_rate, -host_acceptance_rate, -host_is_superhost, -host_thumbnail_url, -host_picture_url, -adjusted_price, -calendar_updated, -calendar_last_scraped)
+
+# 
+# all_ny <- all_ny %>% 
+#   mutate(marathon_week = if_else(date >= ymd("2024-10-30") & date <= ymd("2024-11-06"), 1, 0))
+#   
+#   
+# all_ny <- all_ny %>%
+#   select(
+#     listing_id, date, available, price, minimum_nights, maximum_nights, listing_url,
+#     name, description, picture_url, host_id,
+#     host_name, host_since, host_location, host_neighbourhood, host_listings_count,
+#     host_total_listings_count, neighbourhood, neighbourhood_cleansed,
+#     neighbourhood_group_cleansed, latitude, longitude, property_type, room_type,
+#     accommodates, bathrooms, bathrooms_text, bedrooms, beds, amenities,
+#     minimum_minimum_nights, maximum_minimum_nights, minimum_maximum_nights,
+#     maximum_maximum_nights, minimum_nights_avg_ntm, maximum_nights_avg_ntm,
+#     has_availability, availability_30, availability_60, availability_90,
+#     availability_365, number_of_reviews, review_scores_rating,
+#     review_scores_accuracy, review_scores_cleanliness, review_scores_checkin,
+#     review_scores_communication, review_scores_location, review_scores_value,
+#     reviews_per_month, marathon_week
+#   )
+
+saveRDS(all_ny, "all_ny.rds")
+
+#zip("allny_rds.zip", "all_ny.rds")
 
 ```
 # Data for Chicago
@@ -87,8 +144,32 @@ all_chicago <- readRDS("all_chicago.rds")
 #   select(-price, -maximum_nights, -minimum_nights)
 # # 
 # all_chicago <- merge(chicalendar_clean, chilistings, by = "listing_id")
+
+
+# all_chicago <- all_chicago %>%
+#   mutate(marathon_week = if_else(date >= ymd("2024-10-09") & date <= ymd("2024-10-16"), 1, 0))
 # 
+# 
+# all_chicago <- all_chicago %>%
+#   select(
+#     listing_id, date, available, price, minimum_nights, maximum_nights, listing_url,
+#     name, description, picture_url, host_id,
+#     host_name, host_since, host_location, host_neighbourhood, host_listings_count,
+#     host_total_listings_count, neighbourhood, neighbourhood_cleansed,
+#     neighbourhood_group_cleansed, latitude, longitude, property_type, room_type,
+#     accommodates, bathrooms, bathrooms_text, bedrooms, beds, amenities,
+#     minimum_minimum_nights, maximum_minimum_nights, minimum_maximum_nights,
+#     maximum_maximum_nights, minimum_nights_avg_ntm, maximum_nights_avg_ntm,
+#     has_availability, availability_30, availability_60, availability_90,
+#     availability_365, number_of_reviews, review_scores_rating,
+#     review_scores_accuracy, review_scores_cleanliness, review_scores_checkin,
+#     review_scores_communication, review_scores_location, review_scores_value,
+#     reviews_per_month, marathon_week
+#   )
+# # 
 # saveRDS(all_chicago, "all_chicago.rds")
+
+# zip("allchicago_rds.zip", "all_chicago.rds")
 
 ```
 
@@ -113,8 +194,38 @@ all_sf <- readRDS("all_sf.rds")
 #   select(-price, -maximum_nights, -minimum_nights)
 # # 
 # all_sf <- merge(sfcalendar_clean, sflistings, by = "listing_id")
+
+#  all_sf <- all_sf %>%
+#    mutate(marathon_week = if_else(date >= ymd("2024-07-24") & date <= ymd("2024-07-31"), 1, 0))
+# # 
+# # 
+# all_sf <- all_sf %>%
+#   select(
+#     listing_id, date, available, price, minimum_nights, maximum_nights, listing_url,
+#     name, description, picture_url, host_id,
+#     host_name, host_since, host_location, host_neighbourhood, host_listings_count,
+#     host_total_listings_count, neighbourhood, neighbourhood_cleansed,
+#     neighbourhood_group_cleansed, latitude, longitude, property_type, room_type,
+#     accommodates, bathrooms, bathrooms_text, bedrooms, beds, amenities,
+#     minimum_minimum_nights, maximum_minimum_nights, minimum_maximum_nights,
+#     maximum_maximum_nights, minimum_nights_avg_ntm, maximum_nights_avg_ntm,
+#     has_availability, availability_30, availability_60, availability_90,
+#     availability_365, number_of_reviews, review_scores_rating,
+#     review_scores_accuracy, review_scores_cleanliness, review_scores_checkin,
+#     review_scores_communication, review_scores_location, review_scores_value,
+#     reviews_per_month, marathon_week
+#   )
+
+
+
+
+
+
 # 
-# saveRDS(all_sf, "all_sf.rds")
+ # saveRDS(all_sf, "all_sf.rds")
+
+# zip("allsf_rds.zip", "all_sf.rds")
+
 
 ```
 
@@ -138,7 +249,31 @@ all_denver <- readRDS("all_denver.rds")
 #   select(-price, -maximum_nights, -minimum_nights)
 # # 
 # all_denver <- merge(dencalendar_clean, denlistings, by = "listing_id")
+
+#  all_denver <- all_denver %>%
+#    mutate(marathon_week = if_else(date >= ymd("2024-05-15") & date <= ymd("2024-05-22"), 1, 0))
+# # # 
+# # # 
+# all_denver <- all_denver %>%
+#   select(
+#     listing_id, date, available, price, minimum_nights, maximum_nights, listing_url,
+#     name, description, picture_url, host_id,
+#     host_name, host_since, host_location, host_neighbourhood, host_listings_count,
+#     host_total_listings_count, neighbourhood, neighbourhood_cleansed,
+#     neighbourhood_group_cleansed, latitude, longitude, property_type, room_type,
+#     accommodates, bathrooms, bathrooms_text, bedrooms, beds, amenities,
+#     minimum_minimum_nights, maximum_minimum_nights, minimum_maximum_nights,
+#     maximum_maximum_nights, minimum_nights_avg_ntm, maximum_nights_avg_ntm,
+#     has_availability, availability_30, availability_60, availability_90,
+#     availability_365, number_of_reviews, review_scores_rating,
+#     review_scores_accuracy, review_scores_cleanliness, review_scores_checkin,
+#     review_scores_communication, review_scores_location, review_scores_value,
+#     reviews_per_month, marathon_week
+#   )
+
 # 
 # saveRDS(all_denver, "all_denver.rds")
+
+# zip("alldenver_rds.zip", "all_denver.rds")
 
 ```
