@@ -1,0 +1,289 @@
+---
+title: "Capstone Cleaning"
+author: "Josh Garzaniti"
+date: "2025-01-23"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+#Libraries used
+```{r}
+#library(dplyr)
+#library(ggplot2)
+```
+
+DO NOT RUN CLEAN DATA in G drive
+```{r pressure, echo=FALSE}
+
+#force_plate = read.csv("G:/My Drive/Capstone Project/Forceplate Anonomized Data.csv")
+
+#force_plate = force_plate%>%
+#  filter(Sport %in% c("Men's Ice Hockey","Women's Ice Hockey","Volleyball"))
+
+```
+DNR
+```{r}
+#VolleyballCMJ = read.csv("G:/My Drive/Capstone Project/Forceplate Anonomized Data Volleyball CMJ.csv")
+```
+DNR
+```{r}
+#VolleyballCMJ = VolleyballCMJ%>%
+#  filter(Sport == "Volleyball")
+
+#write.csv(VolleyballCMJ, file = "G:/My Drive/Capstone Project/Forceplate Volleyball CMJ.csv", row.names = FALSE)
+```
+DNR
+```{r}
+#MensIceHockey = read.csv("G:/My Drive/Capstone Project/Forceplate Anonomized Data Men's Ice Hockey CMJ.csv")
+
+#MensIceHockey = MensIceHockey%>%
+#  filter(Sport == "Men's Ice Hockey")
+```
+DNR
+```{r}
+#write.csv(MensIceHockey, file = "G:/My Drive/Capstone Project/Forceplate MensIceHockey CMJ.csv", row.names = FALSE)
+```
+DNR
+```{r}
+#WomensIceHockey = read.csv("G:/My Drive/Capstone Project/Forceplate Anonomized Data Women's Ice Hockey CMJ.csv")
+
+#WomensIceHockey = WomensIceHockey%>%
+#  filter(Sport == "Women's Ice Hockey")
+```
+DNR
+```{r}
+#write.csv(WomensIceHockey, file = "G:/My Drive/Capstone Project/Forceplate WomensIceHockey CMJ.csv", row.names = FALSE)
+```
+
+#Basic Exploration of Jump data values
+
+```{r}
+#summary(MensIceHockey)
+```
+```{r}
+#MensIceHockey =MensIceHockey%>%
+#  mutate(Date = as.Date(Date))%>%
+#  mutate(Weight = as.numeric(Weight))%>%
+#  mutate(JH_1 = as.numeric(JH_1))%>%
+#  mutate(JH_2 = as.numeric(JH_1))%>%
+#  mutate(JH_3 = as.numeric(JH_1))%>%
+#  mutate(JH_4 = as.numeric(JH_1))
+
+#write.csv(MensIceHockey, file = "G:/My Drive/Capstone Project/Forceplate MensIceHockey CMJ.csv", row.names = FALSE)
+
+#WomensIceHockey =WomensIceHockey%>%
+#  mutate(Date = as.Date(Date))%>%
+#  mutate(Weight = as.numeric(Weight))%>%
+#  mutate(JH_1 = as.numeric(JH_1))%>%
+#  mutate(JH_2 = as.numeric(JH_1))%>%
+#  mutate(JH_3 = as.numeric(JH_1))%>%
+#  mutate(JH_4 = as.numeric(JH_1))
+
+#write.csv(WomensIceHockey, file = "G:/My Drive/Capstone Project/Forceplate WomensIceHockey CMJ.csv", row.names = FALSE)
+
+#VolleyballCMJ =VolleyballCMJ%>%
+#  mutate(Date = as.Date(Date))%>%
+#  mutate(Weight = as.numeric(Weight))%>%
+#  mutate(JH_1 = as.numeric(JH_1))%>%
+#  mutate(JH_2 = as.numeric(JH_1))%>%
+#  mutate(JH_3 = as.numeric(JH_1))%>%
+#  mutate(JH_4 = as.numeric(JH_1))
+
+#write.csv(VolleyballCMJ, file = "G:/My Drive/Capstone Project/Forceplate Volleyball CMJ.csv", row.names = FALSE)
+
+```
+
+
+#Adding Position to each datafram (Joining on Player ID)
+```{r}
+#VolleyballCMJ = read.csv("G:/My Drive/Capstone Project/Forceplate Volleyball CMJ.csv")
+
+#MensIceHockey = read.csv("G:/My Drive/Capstone Project/Forceplate MensIceHockey CMJ.csv")
+
+#WomensIceHockey = read.csv("G:/My Drive/Capstone Project/Forceplate WomensIceHockey CMJ.csv")
+
+
+#Athlete_Lookup = read.csv("Athlete_Lookup_Deidentified.csv")
+
+#vball_lookup = Athlete_Lookup%>% 
+#  filter(Sport == "Women's Volleyball")
+  
+
+#MHockey_lookup = Athlete_Lookup%>% 
+#  filter(Sport == "Men's Ice Hockey")
+
+
+#Whockey_lookup = Athlete_Lookup%>% 
+#  filter(Sport == "Women's Ice Hockey")
+  
+
+
+#position = rep(NA, nrow(VolleyballCMJ))
+
+
+#for (i in 1:nrow(vball_lookup)){
+#  position[which(VolleyballCMJ$ID == vball_lookup$UniversityID[i])] = vball_lookup$Positions[i]
+  
+#}
+     
+#VolleyballCMJ$Position = position 
+
+#position2 = rep(NA, nrow(MensIceHockey))
+
+
+#for (i in 1:nrow(MHockey_lookup)){
+#  position2[which(MensIceHockey$ID == MHockey_lookup$UniversityID[i])] = MHockey_lookup$Positions[i]
+  
+#}
+
+#MensIceHockey$Position = position2 
+
+#position3 = rep(NA, nrow(WomensIceHockey))
+
+
+#for (i in 1:nrow(Whockey_lookup)){
+#  position3[which(WomensIceHockey$ID == Whockey_lookup$UniversityID[i])] = Whockey_lookup$Positions[i]
+  
+#}
+
+#WomensIceHockey$Position = position3 
+
+
+
+```
+
+#Making Derived Metrics
+
+```{r}
+#VolleyballCMJ = VolleyballCMJ %>%
+#  mutate(
+#    mean_jump = rowMeans(select(., JH_1:JH_4), na.rm = TRUE),
+#    sd_jump = apply(select(., JH_1:JH_4), 1, sd, na.rm = TRUE)
+#  )
+
+#MensIceHockey = MensIceHockey %>%
+#  mutate(
+#    mean_jump = rowMeans(select(., JH_1:JH_4), na.rm = TRUE),
+#    sd_jump = apply(select(., JH_1:JH_4), 1, sd, na.rm = TRUE)
+#  )
+
+#WomensIceHockey = WomensIceHockey %>%
+#  mutate(
+#    mean_jump = rowMeans(select(., JH_1:JH_4), na.rm = TRUE),
+#    sd_jump = apply(select(., JH_1:JH_4), 1, sd, na.rm = TRUE)
+#  )
+#Do Not Run These Save Files
+#write.csv(VolleyballCMJ, file = "G:/My Drive/Capstone Project/Forceplate Volleyball CMJ.csv", row.names = FALSE)
+
+#write.csv(MensIceHockey, file = "G:/My Drive/Capstone Project/Forceplate MensIceHockey.csv", row.names = FALSE)
+
+#write.csv(WomensIceHockey, file = "G:/My Drive/Capstone Project/Forceplate WomensIceHockey.csv", row.names = FALSE)
+```
+
+## Install packages for XGBoost Model
+```{r}
+library(xgboost)
+library(caret)
+library(fastDummies)
+library(lubridate)
+```
+
+
+## Read in Data
+```{r}
+load("G:/My Drive/Capstone Project/filled_combined_data(1).RData")
+```
+
+Change the variables in this code block:
+
+  - Outcome_var: the variable that is going to be predicted
+  - Sport
+  - Threshold: used to calculate the accuracy of the model, i.e. a prediction is considered accurate if the predicted values is within the threshold from the actual value.
+```{r}
+# volleyball options: block_jump, approach_jump, broad_jump
+# hockey options: Timing
+outcome_var = "block_jump"
+
+# for volleyball: V
+# for mens hockey: MH
+# for womens hockey: WH
+sport = "V"
+
+# Threshold
+threshold = 1
+```
+
+Do not change any other information when running the model.
+```{r, warning = FALSE}
+predictors <- c("mean_jump", "sd_jump", "running_PR")
+
+df_name <- paste0("combined", sport)
+df <- get(df_name)
+#df <- df %>% filter(!is.na(df[[outcome_var]]))
+
+
+# ensure outcome is numeric
+if (!is.numeric(df[[outcome_var]])) {
+  df[[outcome_var]] <- as.numeric(df[[outcome_var]])
+}
+
+# create month variable
+df$month <- as.factor(month(df$date))
+df <- dummy_cols(df, select_columns = "month", remove_first_dummy = FALSE)
+```
+
+##Data Partitioning
+```{r}
+set.seed(303)
+
+# select only predictors (+ month), and outcome variable
+df <- df[, c(predictors, outcome_var, grep("^month_", colnames(df), value = TRUE))]
+
+df <- df[complete.cases(df), ]
+
+X <- df[, !colnames(df) %in% outcome_var]
+y <- df[, outcome_var]
+
+trainIndex <- createDataPartition(y, p = 0.8, list = FALSE)
+X_train <- X[trainIndex, ]
+y_train <- y[trainIndex]
+X_test <- X[-trainIndex, ]
+y_test <- y[-trainIndex]
+```
+
+##XGBoost Model
+```{r}
+dtrain <- xgb.DMatrix(data = as.matrix(X_train), label = y_train)
+dtest <- xgb.DMatrix(data = as.matrix(X_test), label = y_test)
+
+model <- xgb.train(
+  data = dtrain, 
+  nrounds = 100,
+  objective = "reg:squarederror",
+  eval_metric = "rmse")
+
+preds <- predict(model, dtest)
+comparison <- data.frame(preds, y_test)
+
+rmse <- sqrt(mean((preds - y_test)^2))
+print(paste("RMSE: ", rmse))
+
+accuracy_regression <- sum(abs(preds - y_test) <= threshold) / length(y_test)
+print(paste("Accuracy within threshold: ", accuracy_regression))
+```
+
+##Predicted Graph
+```{r}
+plot(y_test, preds, main=paste("Predicted vs Actual: ", outcome_var), xlab="Actual", ylab="Predicted")
+abline(a = 0, b = 1, col = "red") 
+```
+
+##VAriable Importance for XGBoost
+```{r}
+importance_matrix <- xgb.importance(feature_names = colnames(X_train), model = model)
+xgb.plot.importance(importance_matrix)
+```
