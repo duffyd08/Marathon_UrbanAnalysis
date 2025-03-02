@@ -1,0 +1,1893 @@
+---
+title: "ML Urban Analysis Project"
+author: "Josh Garzaniti"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(ggdark)
+library(sf)
+```
+
+# Data for Boston
+  - Last Marathon Date: April 15, 2024
+
+```{r Boston}
+
+# zip("allboston_rds.zip", "all_boston.rds")
+
+
+
+all_boston <- readRDS("all_boston.rds")
+
+# calendar 
+# boscalendar <- read.csv("C://Users/Drew Duffy/Downloads/bostonmarathon_calendar.csv.gz")
+# 
+# boscalendar_clean <- boscalendar %>% 
+#   mutate(date = as.Date(date, format = "%Y-%m-%d"), 
+#          available = ifelse(available == "t", 1, 0), 
+#          price = as.numeric(gsub("[^0-9.]", "", price))) 
+# 
+# # listings 
+# boslistings <- read.csv("C://Users/Drew Duffy/Downloads/listings (2).csv.gz") %>% 
+#   rename(listing_id = id) %>% 
+#   select(-price, -maximum_nights, -minimum_nights)
+# 
+# 
+# all_boston <- merge(boscalendar_clean, boslistings, by = "listing_id")
+
+# all_boston <- all_boston %>%
+#   select(
+#     listing_id, date, available, price, minimum_nights, maximum_nights, listing_url,
+#     name, description, neighborhood_overview, picture_url, host_id, host_url,
+#     host_name, host_since, host_location, host_about, host_response_time,
+#     host_response_rate, host_neighbourhood, host_listings_count,
+#     host_total_listings_count, neighbourhood, neighbourhood_cleansed,
+#     neighbourhood_group_cleansed, latitude, longitude, property_type, room_type,
+#     accommodates, bathrooms, bathrooms_text, bedrooms, beds, amenities,
+#     minimum_minimum_nights, maximum_minimum_nights, minimum_maximum_nights,
+#     maximum_maximum_nights, minimum_nights_avg_ntm, maximum_nights_avg_ntm,
+#     has_availability, availability_30, availability_60, availability_90,
+#     availability_365, number_of_reviews, review_scores_rating,
+#     review_scores_accuracy, review_scores_cleanliness, review_scores_checkin,
+#     review_scores_communication, review_scores_location, review_scores_value,
+#     reviews_per_month, marathon_week
+#   )
+
+# all_boston <- all_boston %>% 
+#   mutate(marathon_week = if_else(date >= ymd("2024-04-11") & date <= ymd("2024-04-18"), 1, 0))
+
+#saveRDS(all_boston, "all_boston.rds")
+
+#zip("allboston_rds.zip", "all_boston.rds")
+
+
+```
+
+# Data for New York
+ - Last Marathon Date: November 3, 2024
+
+```{r New York}
+
+all_ny <- readRDS("all_ny.rds")
+
+# calendar 
+
+# nycalendar <- read.csv("C://Users/Drew Duffy/Downloads/nycalendar_try.csv.gz")
+# 
+# nycalendar_clean <- nycalendar %>%
+#    mutate(date = as.Date(date, format = "%Y-%m-%d"),
+#           available = ifelse(available == "t", 1, 0),
+#            price = as.numeric(gsub("[^0-9.]", "", price)))
+#  #
+# # # # listings
+# nylistings <- read.csv("C://Users/Drew Duffy/Downloads/nylistings_try.csv.gz") %>%
+#   rename(listing_id = id) %>%
+#   select(-price, -maximum_nights, -minimum_nights)
+# # 
+# all_ny <- merge(nycalendar_clean, nylistings, by = "listing_id")
+# 
+# all_ny_filter <- all_ny %>% 
+#   mutate(year = year(date)) %>% 
+#   filter(year == 2024, price >0) %>% 
+#   select(-license, -calculated_host_listings_count_shared_rooms, -calculated_host_listings_count_private_rooms, -calculated_host_listings_count_entire_homes, -neighborhood_overview, -host_about, -host_url, -host_response_time, -host_response_rate, -host_acceptance_rate, -host_is_superhost, -host_thumbnail_url, -host_picture_url, -adjusted_price, -calendar_updated, -calendar_last_scraped)
+
+# 
+# all_ny <- all_ny %>% 
+#   mutate(marathon_week = if_else(date >= ymd("2024-10-30") & date <= ymd("2024-11-06"), 1, 0))
+#   
+#   
+# all_ny <- all_ny %>%
+#   select(
+#     listing_id, date, available, price, minimum_nights, maximum_nights, listing_url,
+#     name, description, picture_url, host_id,
+#     host_name, host_since, host_location, host_neighbourhood, host_listings_count,
+#     host_total_listings_count, neighbourhood, neighbourhood_cleansed,
+#     neighbourhood_group_cleansed, latitude, longitude, property_type, room_type,
+#     accommodates, bathrooms, bathrooms_text, bedrooms, beds, amenities,
+#     minimum_minimum_nights, maximum_minimum_nights, minimum_maximum_nights,
+#     maximum_maximum_nights, minimum_nights_avg_ntm, maximum_nights_avg_ntm,
+#     has_availability, availability_30, availability_60, availability_90,
+#     availability_365, number_of_reviews, review_scores_rating,
+#     review_scores_accuracy, review_scores_cleanliness, review_scores_checkin,
+#     review_scores_communication, review_scores_location, review_scores_value,
+#     reviews_per_month, marathon_week
+#   )
+
+#saveRDS(all_ny, "all_ny.rds")
+
+#zip("allny_rds.zip", "all_ny.rds")
+
+```
+# Data for Chicago
+  - Last Marathon Date: October 13, 2024
+
+```{r Chicago}
+
+all_chicago <- readRDS("all_chicago.rds")
+
+# # calendar 
+# chicalendar <- read.csv("C://Users/Drew Duffy/Downloads/chicagomarathon_calendar.csv.gz")
+# # 
+# chicalendar_clean <- chicalendar %>% 
+#   mutate(date = as.Date(date, format = "%Y-%m-%d"), 
+#          available = ifelse(available == "t", 1, 0), 
+#           price = as.numeric(gsub("[^0-9.]", "", price))) 
+#  
+# # listings 
+# chilistings <- read.csv("C://Users/Drew Duffy/Downloads/chicagomarathon_listings.csv.gz") %>% 
+#   rename(listing_id = id) %>% 
+#   select(-price, -maximum_nights, -minimum_nights)
+# # 
+# all_chicago <- merge(chicalendar_clean, chilistings, by = "listing_id")
+
+
+# all_chicago <- all_chicago %>%
+#   mutate(marathon_week = if_else(date >= ymd("2024-10-09") & date <= ymd("2024-10-16"), 1, 0))
+# 
+# 
+# all_chicago <- all_chicago %>%
+#   select(
+#     listing_id, date, available, price, minimum_nights, maximum_nights, listing_url,
+#     name, description, picture_url, host_id,
+#     host_name, host_since, host_location, host_neighbourhood, host_listings_count,
+#     host_total_listings_count, neighbourhood, neighbourhood_cleansed,
+#     neighbourhood_group_cleansed, latitude, longitude, property_type, room_type,
+#     accommodates, bathrooms, bathrooms_text, bedrooms, beds, amenities,
+#     minimum_minimum_nights, maximum_minimum_nights, minimum_maximum_nights,
+#     maximum_maximum_nights, minimum_nights_avg_ntm, maximum_nights_avg_ntm,
+#     has_availability, availability_30, availability_60, availability_90,
+#     availability_365, number_of_reviews, review_scores_rating,
+#     review_scores_accuracy, review_scores_cleanliness, review_scores_checkin,
+#     review_scores_communication, review_scores_location, review_scores_value,
+#     reviews_per_month, marathon_week
+#   )
+# # 
+# saveRDS(all_chicago, "all_chicago.rds")
+
+# zip("allchicago_rds.zip", "all_chicago.rds")
+
+```
+
+# Data for San Francisco
+  - Last Marathon Date: July 28, 2024
+
+```{r San Fran}
+
+all_sf <- readRDS("all_sf.rds")
+
+# calendar 
+# sfcalendar <- read.csv("C://Users/Drew Duffy/Downloads/sfmarathon_calendar.csv.gz")
+# # 
+# sfcalendar_clean <- sfcalendar %>% 
+#   mutate(date = as.Date(date, format = "%Y-%m-%d"), 
+#          available = ifelse(available == "t", 1, 0), 
+#           price = as.numeric(gsub("[^0-9.]", "", price))) 
+#  
+# # listings 
+# sflistings <- read.csv("C://Users/Drew Duffy/Downloads/sfmarathon_listings.csv.gz") %>% 
+#   rename(listing_id = id) %>% 
+#   select(-price, -maximum_nights, -minimum_nights)
+# # 
+# all_sf <- merge(sfcalendar_clean, sflistings, by = "listing_id")
+
+#  all_sf <- all_sf %>%
+#    mutate(marathon_week = if_else(date >= ymd("2024-07-24") & date <= ymd("2024-07-31"), 1, 0))
+# # 
+# # 
+# all_sf <- all_sf %>%
+#   select(
+#     listing_id, date, available, price, minimum_nights, maximum_nights, listing_url,
+#     name, description, picture_url, host_id,
+#     host_name, host_since, host_location, host_neighbourhood, host_listings_count,
+#     host_total_listings_count, neighbourhood, neighbourhood_cleansed,
+#     neighbourhood_group_cleansed, latitude, longitude, property_type, room_type,
+#     accommodates, bathrooms, bathrooms_text, bedrooms, beds, amenities,
+#     minimum_minimum_nights, maximum_minimum_nights, minimum_maximum_nights,
+#     maximum_maximum_nights, minimum_nights_avg_ntm, maximum_nights_avg_ntm,
+#     has_availability, availability_30, availability_60, availability_90,
+#     availability_365, number_of_reviews, review_scores_rating,
+#     review_scores_accuracy, review_scores_cleanliness, review_scores_checkin,
+#     review_scores_communication, review_scores_location, review_scores_value,
+#     reviews_per_month, marathon_week
+#   )
+
+
+
+
+
+
+# 
+ # saveRDS(all_sf, "all_sf.rds")
+
+# zip("allsf_rds.zip", "all_sf.rds")
+
+
+```
+
+
+# Data for Denver
+  - Last Marathon Date: May 19, 2024
+
+```{r Denver}
+all_denver <- readRDS("all_denver.rds")
+# calendar 
+# dencalendar <- read.csv("C://Users/Drew Duffy/Downloads/denvermarathon_calendar.csv.gz")
+# # 
+# dencalendar_clean <- dencalendar %>% 
+#   mutate(date = as.Date(date, format = "%Y-%m-%d"), 
+#          available = ifelse(available == "t", 1, 0), 
+#           price = as.numeric(gsub("[^0-9.]", "", price))) 
+#  
+# # listings 
+# denlistings <- read.csv("C://Users/Drew Duffy/Downloads/denvermarathon_listings.csv.gz") %>% 
+#   rename(listing_id = id) %>% 
+#   select(-price, -maximum_nights, -minimum_nights)
+# # 
+# all_denver <- merge(dencalendar_clean, denlistings, by = "listing_id")
+
+#  all_denver <- all_denver %>%
+#    mutate(marathon_week = if_else(date >= ymd("2024-05-15") & date <= ymd("2024-05-22"), 1, 0))
+# # # 
+# # # 
+# all_denver <- all_denver %>%
+#   select(
+#     listing_id, date, available, price, minimum_nights, maximum_nights, listing_url,
+#     name, description, picture_url, host_id,
+#     host_name, host_since, host_location, host_neighbourhood, host_listings_count,
+#     host_total_listings_count, neighbourhood, neighbourhood_cleansed,
+#     neighbourhood_group_cleansed, latitude, longitude, property_type, room_type,
+#     accommodates, bathrooms, bathrooms_text, bedrooms, beds, amenities,
+#     minimum_minimum_nights, maximum_minimum_nights, minimum_maximum_nights,
+#     maximum_maximum_nights, minimum_nights_avg_ntm, maximum_nights_avg_ntm,
+#     has_availability, availability_30, availability_60, availability_90,
+#     availability_365, number_of_reviews, review_scores_rating,
+#     review_scores_accuracy, review_scores_cleanliness, review_scores_checkin,
+#     review_scores_communication, review_scores_location, review_scores_value,
+#     reviews_per_month, marathon_week
+#   )
+
+# 
+# saveRDS(all_denver, "all_denver.rds")
+
+# zip("alldenver_rds.zip", "all_denver.rds")
+
+```
+
+##Data Cleaning
+```{r}
+#mutating host is superhost in boston to be binary factor
+all_boston = all_boston%>%
+  mutate(host_is_superhost = ifelse(host_is_superhost == "t", 1, 0))%>%
+    mutate(host_has_profile_pic = ifelse(host_has_profile_pic == "t", 1, 0))%>%
+    mutate(host_identity_verified = ifelse(host_identity_verified == "t", 1, 0))%>%
+  mutate(has_availability = ifelse(has_availability == "t", 1, 0))%>%
+  mutate(instant_bookable = ifelse(instant_bookable == "t", 1, 0))
+
+#potentially drop neighborhood group cleansed and adjusted price, calander updated
+all_boston = all_boston%>%
+  select(-neighbourhood_group_cleansed, -adjusted_price, -calendar_updated)
+
+
+all_boston = all_boston%>%
+  mutate(listing_id = as.character(listing_id))%>%
+  mutate(date = as_datetime(date))%>%
+  mutate(available = as.numeric(available))%>% #binary
+  mutate(price = as.numeric(price))%>%
+  mutate(minimum_nights = as.numeric(minimum_nights))%>%
+  mutate(maximum_nights = as.numeric(maximum_nights))%>%
+  mutate(scrape_id = as.character(scrape_id))%>%
+  mutate(last_scraped = as_datetime(last_scraped))%>%
+  mutate(maximum_nights = as.numeric(maximum_nights))%>%
+  mutate(host_id = as.character(host_id))%>%
+  mutate(host_since = as_datetime(host_since))%>%
+  mutate(host_response_time = as.factor(host_response_time))%>%
+  mutate(host_response_rate = as.numeric(host_response_rate))%>%
+  mutate(host_response_rate = as.numeric(gsub("%", "", all_boston$host_response_rate)) / 100)%>%
+  mutate(host_acceptance_rate = as.numeric(gsub("%", "", all_boston$host_acceptance_rate)) /100)%>%
+  mutate(host_listings_count = as.numeric(host_listings_count))%>%
+  mutate(host_total_listings_count = as.numeric(host_total_listings_count))%>%
+  mutate(phone = grepl("'phone'", host_verifications),email = grepl("'email'", host_verifications), email_phone = grepl("'email'", host_verifications) & grepl("'phone'", host_verifications), email_phone_work_email = grepl("'email'", host_verifications) & 
+  grepl("'phone'", host_verifications) & grepl("'work_email'", host_verifications))%>%
+  mutate(phone = as.factor(as.integer(grepl("'phone'", host_verifications))),
+  email = as.factor(as.integer(grepl("'email'", host_verifications))),
+  email_phone = as.factor(as.integer(grepl("'email'", host_verifications) & grepl("'phone'", host_verifications))),email_phone_work_email = as.factor(as.integer(grepl("'email'", host_verifications) & grepl("'phone'", host_verifications) & grepl("'work_email'", host_verifications))))%>%
+  mutate(host_is_superhost = as.numeric(host_is_superhost))%>% #binary
+  mutate(host_has_profile_pic = as.numeric(host_has_profile_pic))%>% #binary
+  mutate(host_identity_verified = as.numeric(host_identity_verified))%>% #binary
+  mutate(host_neighbourhood = as.factor(host_neighbourhood))%>%
+  mutate(neighbourhood_cleansed = as.factor(neighbourhood_cleansed))%>%
+  mutate(property_type = as.factor(property_type))%>%
+  mutate(room_type = as.factor(room_type))%>%
+  mutate(accommodates = as.ordered(accommodates))%>%
+  mutate(bathrooms = as.ordered(bathrooms))%>%
+  mutate(bedrooms = as.ordered(bedrooms))%>%
+  mutate(beds = as.ordered(beds))%>%
+  mutate(minimum_minimum_nights = as.numeric(minimum_minimum_nights))%>%
+  mutate(maximum_minimum_nights = as.numeric(maximum_minimum_nights))%>%
+  mutate(minimum_maximum_nights = as.numeric(minimum_maximum_nights))%>%
+  mutate(maximum_maximum_nights = as.numeric(maximum_maximum_nights))%>%
+  mutate(minimum_nights_avg_ntm = as.numeric(minimum_nights_avg_ntm))%>%
+  mutate(maximum_nights_avg_ntm = as.numeric(maximum_nights_avg_ntm))%>%
+  mutate(has_availability = as.numeric(has_availability))%>% #binary
+  mutate(maximum_minimum_nights = as.numeric(maximum_minimum_nights))%>%
+  mutate(calendar_last_scraped = as_datetime(calendar_last_scraped))%>%
+  mutate(first_review = as_datetime(first_review))%>%
+  mutate(last_review = as_datetime(last_review))%>%
+  mutate(review_scores_accuracy = as.ordered(review_scores_accuracy))%>%
+  mutate(review_scores_checkin = as.ordered(review_scores_checkin))%>%
+  mutate(instant_bookable = as.numeric(instant_bookable))%>%
+  mutate(calculated_host_listings_count_shared_rooms = as.ordered(calculated_host_listings_count_shared_rooms))
+  
+
+```
+##Looking at Boston After
+```{r}
+head(all_boston, 5)
+
+all_boston = all_boston%>%
+  select(-scrape_id, -listing_url, -last_scraped, -source, -picture_url, -host_url, -host_about, -host_thumbnail_url, -host_picture_url, -amenities, -host_verifications, -calendar_last_scraped, -amenities, -bathrooms_text, -neighbourhood, -host_neighbourhood, -host_name, -host_id, -neighborhood_overview, -description, -name)
+
+head(all_boston)
+```
+
+
+#Data Cleaning Chicago
+```{r}
+#mutate true and false cols into binary numerics
+all_chicago = all_chicago%>%
+  mutate(host_is_superhost = ifelse(host_is_superhost == "t", 1, 0))%>%
+    mutate(host_has_profile_pic = ifelse(host_has_profile_pic == "t", 1, 0))%>%
+    mutate(host_identity_verified = ifelse(host_identity_verified == "t", 1, 0))%>%
+  mutate(has_availability = ifelse(has_availability == "t", 1, 0))%>%
+  mutate(instant_bookable = ifelse(instant_bookable == "t", 1, 0))
+
+#drop all cols we don't need for analysis
+all_chicago = all_chicago%>%
+  mutate(listing_id = as.character(listing_id))%>%
+  mutate(date = as_datetime(date))%>%
+  mutate(available = as.numeric(available))%>% #binary
+  mutate(price = as.numeric(price))%>%
+  mutate(minimum_nights = as.numeric(minimum_nights))%>%
+  mutate(maximum_nights = as.numeric(maximum_nights))%>%
+  mutate(scrape_id = as.character(scrape_id))%>%
+  mutate(last_scraped = as_datetime(last_scraped))%>%
+  mutate(maximum_nights = as.numeric(maximum_nights))%>%
+  mutate(host_id = as.character(host_id))%>%
+  mutate(host_since = as_datetime(host_since))%>%
+  mutate(host_response_time = as.factor(host_response_time))%>%
+  mutate(host_response_rate = as.numeric(host_response_rate))%>%
+  mutate(host_response_rate = as.numeric(gsub("%", "", all_chicago$host_response_rate)) / 100)%>%
+  mutate(host_acceptance_rate = as.numeric(gsub("%", "", all_chicago$host_acceptance_rate)) /100)%>%
+  mutate(host_listings_count = as.numeric(host_listings_count))%>%
+  mutate(host_total_listings_count = as.numeric(host_total_listings_count))%>%
+  mutate(phone = grepl("'phone'", host_verifications),email = grepl("'email'", host_verifications), email_phone = grepl("'email'", host_verifications) & grepl("'phone'", host_verifications), email_phone_work_email = grepl("'email'", host_verifications) & 
+  grepl("'phone'", host_verifications) & grepl("'work_email'", host_verifications))%>%
+  mutate(phone = as.factor(as.integer(grepl("'phone'", host_verifications))),
+  email = as.factor(as.integer(grepl("'email'", host_verifications))),
+  email_phone = as.factor(as.integer(grepl("'email'", host_verifications) & grepl("'phone'", host_verifications))),email_phone_work_email = as.factor(as.integer(grepl("'email'", host_verifications) & grepl("'phone'", host_verifications) & grepl("'work_email'", host_verifications))))%>%
+  mutate(host_is_superhost = as.numeric(host_is_superhost))%>% #binary
+  mutate(host_has_profile_pic = as.numeric(host_has_profile_pic))%>% #binary
+  mutate(host_identity_verified = as.numeric(host_identity_verified))%>% #binary
+  mutate(host_neighbourhood = as.factor(host_neighbourhood))%>%
+  mutate(neighbourhood_cleansed = as.factor(neighbourhood_cleansed))%>%
+  mutate(property_type = as.factor(property_type))%>%
+  mutate(room_type = as.factor(room_type))%>%
+  mutate(accommodates = as.ordered(accommodates))%>%
+  mutate(bathrooms = as.ordered(bathrooms))%>%
+  mutate(bedrooms = as.ordered(bedrooms))%>%
+  mutate(beds = as.ordered(beds))%>%
+  mutate(minimum_minimum_nights = as.numeric(minimum_minimum_nights))%>%
+  mutate(maximum_minimum_nights = as.numeric(maximum_minimum_nights))%>%
+  mutate(minimum_maximum_nights = as.numeric(minimum_maximum_nights))%>%
+  mutate(maximum_maximum_nights = as.numeric(maximum_maximum_nights))%>%
+  mutate(minimum_nights_avg_ntm = as.numeric(minimum_nights_avg_ntm))%>%
+  mutate(maximum_nights_avg_ntm = as.numeric(maximum_nights_avg_ntm))%>%
+  mutate(has_availability = as.numeric(has_availability))%>% #binary
+  mutate(maximum_minimum_nights = as.numeric(maximum_minimum_nights))%>%
+  mutate(calendar_last_scraped = as_datetime(calendar_last_scraped))%>%
+  mutate(first_review = as_datetime(first_review))%>%
+  mutate(last_review = as_datetime(last_review))%>%
+  mutate(review_scores_accuracy = as.ordered(review_scores_accuracy))%>%
+  mutate(review_scores_checkin = as.ordered(review_scores_checkin))%>%
+  mutate(instant_bookable = as.numeric(instant_bookable))%>%
+  mutate(calculated_host_listings_count_shared_rooms = as.ordered(calculated_host_listings_count_shared_rooms))
+
+#drop all cols we don't need for analysis
+all_chicago = all_chicago%>%
+  select(-adjusted_price, -neighbourhood_group_cleansed, -calendar_updated, -scrape_id, -listing_url, -last_scraped, -source, -picture_url, -host_url, -host_about, -host_thumbnail_url, -host_picture_url, -amenities, -host_verifications, -calendar_last_scraped, -amenities, -bathrooms_text, -neighbourhood, -host_neighbourhood, -host_name, -host_id, -neighborhood_overview, -description, -name)
+
+
+head(all_chicago, 5)
+```
+
+#Data Cleaning Denver
+```{r}
+#mutate true/false into binary numeric
+all_denver = all_denver%>%
+  mutate(has_availability = ifelse(has_availability == "t", 1, 0))
+
+#mutate into correct data types and create factor dummy out of host verification
+all_denver = all_denver%>%
+  mutate(listing_id = as.character(listing_id))%>%
+  mutate(date = as_datetime(date))%>%
+  mutate(available = as.numeric(available))%>% #binary
+  mutate(price = as.numeric(price))%>%
+  mutate(minimum_nights = as.numeric(minimum_nights))%>%
+  mutate(maximum_nights = as.numeric(maximum_nights))%>%
+  mutate(maximum_nights = as.numeric(maximum_nights))%>%
+  mutate(host_id = as.character(host_id))%>%
+  mutate(host_since = as_datetime(host_since))%>%
+  mutate(host_listings_count = as.numeric(host_listings_count))%>%
+  mutate(host_total_listings_count = as.numeric(host_total_listings_count))%>%
+  mutate(host_neighbourhood = as.factor(host_neighbourhood))%>%
+  mutate(neighbourhood_cleansed = as.factor(neighbourhood_cleansed))%>%
+  mutate(property_type = as.factor(property_type))%>%
+  mutate(room_type = as.factor(room_type))%>%
+  mutate(accommodates = as.ordered(accommodates))%>%
+  mutate(bathrooms = as.ordered(bathrooms))%>%
+  mutate(bedrooms = as.ordered(bedrooms))%>%
+  mutate(beds = as.ordered(beds))%>%
+  mutate(minimum_minimum_nights = as.numeric(minimum_minimum_nights))%>%
+  mutate(maximum_minimum_nights = as.numeric(maximum_minimum_nights))%>%
+  mutate(minimum_maximum_nights = as.numeric(minimum_maximum_nights))%>%
+  mutate(maximum_maximum_nights = as.numeric(maximum_maximum_nights))%>%
+  mutate(minimum_nights_avg_ntm = as.numeric(minimum_nights_avg_ntm))%>%
+  mutate(maximum_nights_avg_ntm = as.numeric(maximum_nights_avg_ntm))%>%
+  mutate(has_availability = as.numeric(has_availability))%>% #binary
+  mutate(maximum_minimum_nights = as.numeric(maximum_minimum_nights))%>%
+  mutate(review_scores_accuracy = as.ordered(review_scores_accuracy))%>%
+  mutate(review_scores_checkin = as.ordered(review_scores_checkin))
+
+
+#Drop all cols we don't need for analysis
+all_denver = all_denver%>%
+  select(-neighbourhood_group_cleansed, -listing_url,-amenities, -bathrooms_text, -neighbourhood, -host_neighbourhood, -host_name, -host_id, -description, -name, -picture_url)
+
+
+head(all_denver, 5)
+```
+
+
+##Data Cleaning NY
+```{r}
+#Mutate all true false into binary numeric
+
+all_ny = all_ny%>%
+    mutate(has_availability = ifelse(has_availability == "t", 1, 0))
+
+all_ny = all_ny%>%
+  mutate(listing_id = as.character(listing_id))%>%
+  mutate(date = as_datetime(date))%>%
+  mutate(available = as.numeric(available))%>% #binary
+  mutate(price = as.numeric(price))%>%
+  mutate(minimum_nights = as.numeric(minimum_nights))%>%
+  mutate(maximum_nights = as.numeric(maximum_nights))%>%
+  mutate(maximum_nights = as.numeric(maximum_nights))%>%
+  mutate(host_id = as.character(host_id))%>%
+  mutate(neighbourhood_cleansed = as.factor(neighbourhood_cleansed))%>%
+  mutate(property_type = as.factor(property_type))%>%
+  mutate(room_type = as.factor(room_type))%>%
+  mutate(accommodates = as.ordered(accommodates))%>%
+  mutate(bathrooms = as.ordered(bathrooms))%>%
+  mutate(bedrooms = as.ordered(bedrooms))%>%
+  mutate(beds = as.ordered(beds))%>%
+  mutate(has_availability = as.numeric(has_availability))
+
+#Drop all cols we don't need for analysis
+all_ny = all_ny%>%
+  select(-neighbourhood_group_cleansed, -neighbourhood, -host_id)
+
+head(all_ny, 5)
+```
+
+
+##Data Cleaning San Francisco
+```{r}
+#Mutate all true false into binary numeric
+all_sf = all_sf%>%
+  mutate(has_availability = ifelse(has_availability == "t", 1, 0))
+
+
+#mutate into correct data types and create factor dummy out of host verification
+all_sf = all_sf%>%
+  mutate(listing_id = as.character(listing_id))%>%
+  mutate(date = as_datetime(date))%>%
+  mutate(available = as.numeric(available))%>% #binary
+  mutate(price = as.numeric(price))%>%
+  mutate(minimum_nights = as.numeric(minimum_nights))%>%
+  mutate(maximum_nights = as.numeric(maximum_nights))%>%
+  mutate(maximum_nights = as.numeric(maximum_nights))%>%
+  mutate(host_id = as.character(host_id))%>%
+  mutate(host_since = as_datetime(host_since))%>%
+  mutate(host_listings_count = as.numeric(host_listings_count))%>%
+  mutate(host_total_listings_count = as.numeric(host_total_listings_count))%>%
+  mutate(host_neighbourhood = as.factor(host_neighbourhood))%>%
+  mutate(neighbourhood_cleansed = as.factor(neighbourhood_cleansed))%>%
+  mutate(property_type = as.factor(property_type))%>%
+  mutate(room_type = as.factor(room_type))%>%
+  mutate(accommodates = as.ordered(accommodates))%>%
+  mutate(bathrooms = as.ordered(bathrooms))%>%
+  mutate(bedrooms = as.ordered(bedrooms))%>%
+  mutate(beds = as.ordered(beds))%>%
+  mutate(minimum_minimum_nights = as.numeric(minimum_minimum_nights))%>%
+  mutate(maximum_minimum_nights = as.numeric(maximum_minimum_nights))%>%
+  mutate(minimum_maximum_nights = as.numeric(minimum_maximum_nights))%>%
+  mutate(maximum_maximum_nights = as.numeric(maximum_maximum_nights))%>%
+  mutate(minimum_nights_avg_ntm = as.numeric(minimum_nights_avg_ntm))%>%
+  mutate(maximum_nights_avg_ntm = as.numeric(maximum_nights_avg_ntm))%>%
+  mutate(has_availability = as.numeric(has_availability))%>% #binary
+  mutate(maximum_minimum_nights = as.numeric(maximum_minimum_nights))%>%
+  mutate(review_scores_accuracy = as.ordered(review_scores_accuracy))%>%
+  mutate(review_scores_checkin = as.ordered(review_scores_checkin))
+
+
+#drop all cols we don't needs for analysis
+all_sf = all_sf%>%
+  select(-neighbourhood_group_cleansed, -listing_url,-picture_url, -amenities, -bathrooms_text, -neighbourhood, -host_neighbourhood, -host_name, -host_id, -description, -name)
+
+
+head(all_sf, 5)
+```
+##EDA
+```{r}
+#Finding listing's by neighborhood for each city
+Boston_Sum_by_Neighborhood = all_boston%>%
+  group_by(neighbourhood_cleansed)%>%
+  summarize(Total_Listings = n_distinct(listing_id), .groups = "drop")
+
+#Boston
+Boston_Listings_by_Neighborhood = ggplot(Boston_Sum_by_Neighborhood, 
+                                 mapping = aes(x = reorder(neighbourhood_cleansed,                                          -Total_Listings), 
+                                 y = Total_Listings, 
+                                 fill = neighbourhood_cleansed))+
+                                 geom_bar(stat = "identity")+
+                                 dark_theme_minimal()+
+                                 labs(title = "Total Listings in Boston", 
+                                 subtitle = "by Neighborhood",
+                                 x = "Neighborhood",
+                                 y = "Number of Listings")+
+                                 theme(panel.grid.major = element_blank(), 
+                                 panel.grid.minor = element_blank(),
+                                 panel.background = element_blank(),
+                                 axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+Boston_Listings_by_Neighborhood
+
+ggsave("Boston_Listings_by_Neighborhood.png", 
+       plot = Boston_Listings_by_Neighborhood, 
+       width = 10, height = 6, dpi = 300)
+```
+
+##Chicago 
+
+```{r}
+#Finding listing's by neighborhood for each city
+Chicago_Sum_by_Neighborhood = all_chicago%>%
+  group_by(neighbourhood_cleansed)%>%
+  summarize(Total_Listings = n_distinct(listing_id), .groups = "drop")
+
+#Chicago
+Chicago_Listings_by_Neighborhood = ggplot(Chicago_Sum_by_Neighborhood, 
+                                 mapping = aes(x = reorder(neighbourhood_cleansed,                                          -Total_Listings), 
+                                 y = Total_Listings, 
+                                 fill = neighbourhood_cleansed))+
+                                 geom_bar(stat = "identity")+
+                                 dark_theme_minimal()+
+                                 labs(title = "Total Listings in Chicago", 
+                                 subtitle = "by Neighborhood",
+                                 x = "Neighborhood",
+                                 y = "Number of Listings")+
+                                 theme(panel.grid.major = element_blank(), 
+                                 panel.grid.minor = element_blank(),
+                                 panel.background = element_blank(),
+                                 axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+Chicago_Listings_by_Neighborhood
+
+ggsave("Chicago_Listings_by_Neighborhood.png", 
+       plot = Chicago_Listings_by_Neighborhood, 
+       width = 10, height = 6, dpi = 300)
+```
+
+##Denver
+
+```{r}
+#Finding listing's by neighborhood for each city
+Denver_Sum_by_Neighborhood = all_denver%>%
+  group_by(neighbourhood_cleansed)%>%
+  summarize(Total_Listings = n_distinct(listing_id), .groups = "drop")
+
+#Denver
+Denver_Listings_by_Neighborhood = ggplot(Denver_Sum_by_Neighborhood, 
+                                 mapping = aes(x = reorder(neighbourhood_cleansed,                                          -Total_Listings), 
+                                 y = Total_Listings, 
+                                 fill = neighbourhood_cleansed))+
+                                 geom_bar(stat = "identity")+
+                                 dark_theme_minimal()+
+                                 labs(title = "Total Listings in Denver", 
+                                 subtitle = "by Neighborhood",
+                                 x = "Neighborhood",
+                                 y = "Number of Listings")+
+                                 theme(panel.grid.major = element_blank(), 
+                                 panel.grid.minor = element_blank(),
+                                 panel.background = element_blank(),
+                                 axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+Denver_Listings_by_Neighborhood
+
+ggsave("Denver_Listings_by_Neighborhood.png", 
+       plot = Denver_Listings_by_Neighborhood, 
+       width = 10, height = 6, dpi = 300)
+```
+
+##San Francisco
+
+```{r}
+#Finding listing's by neighborhood for each city
+SF_Sum_by_Neighborhood = all_sf%>%
+  group_by(neighbourhood_cleansed)%>%
+  summarize(Total_Listings = n_distinct(listing_id), .groups = "drop")
+
+#SF
+SF_Listings_by_Neighborhood = ggplot(SF_Sum_by_Neighborhood, 
+                                 mapping = aes(x = reorder(neighbourhood_cleansed,                                          -Total_Listings), 
+                                 y = Total_Listings, 
+                                 fill = neighbourhood_cleansed))+
+                                 geom_bar(stat = "identity")+
+                                 dark_theme_minimal()+
+                                 labs(title = "Total Listings in San Francisco", 
+                                 subtitle = "by Neighborhood",
+                                 x = "Neighborhood",
+                                 y = "Number of Listings")+
+                                 theme(panel.grid.major = element_blank(), 
+                                 panel.grid.minor = element_blank(),
+                                 panel.background = element_blank(),
+                                 axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+SF_Listings_by_Neighborhood
+
+ggsave("SF_by_Neighborhood.png", 
+       plot = SF_Listings_by_Neighborhood, 
+       width = 10, height = 6, dpi = 300)
+```
+
+##New York
+
+```{r}
+#Finding listing's by neighborhood for each city
+NY_Sum_by_Neighborhood = all_ny%>%
+  group_by(neighbourhood_cleansed)%>%
+  summarize(Total_Listings = n_distinct(listing_id), .groups = "drop")
+
+#NY
+NY_Listings_by_Neighborhood = ggplot(NY_Sum_by_Neighborhood, 
+                                 mapping = aes(x = reorder(neighbourhood_cleansed,                                          -Total_Listings), 
+                                 y = Total_Listings, 
+                                 fill = neighbourhood_cleansed))+
+                                 geom_bar(stat = "identity")+
+                                 dark_theme_minimal()+
+                                 labs(title = "Total Listings in New York", 
+                                 subtitle = "by Neighborhood",
+                                 x = "Neighborhood",
+                                 y = "Number of Listings")+
+                                 theme(panel.grid.major = element_blank(), 
+                                 panel.grid.minor = element_blank(),
+                                 panel.background = element_blank(),
+                                 axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+NY_Listings_by_Neighborhood
+
+ggsave("NY_by_Neighborhood.png", 
+       plot = NY_Listings_by_Neighborhood, 
+       width = 20, height = 10, dpi = 300)
+```
+
+##Time Series of Average Price for Cities Boston
+```{r}
+#Force Date in Boston to be a date not posit format
+all_boston$date = as.Date(all_boston$date)
+#Group by date and find the mean price
+Average_Price_Time_Series_Boston = all_boston%>%
+  mutate(date = as.Date(date))%>%
+  group_by(date)%>%
+  summarize(Average_Price = mean(price))
+
+#Average_Price_Time_Series_Boston = Average_Price_Time_Series_Boston%>%
+ # mutate(date = as.Date(date))
+
+Average_Price_by_Date_Boston = ggplot(Average_Price_Time_Series_Boston, 
+                               mapping = aes(x = date, y = Average_Price))+
+                               geom_line(color = "steelblue", size = 1)+
+                               dark_theme_minimal()+
+                               labs(title = "Boston Average Listing Price",
+                               subtitle = "by date", 
+                               x = "Date", 
+                               y = "Price")+
+                               scale_x_date(date_labels = "%b %d", date_breaks = "1 week")+
+                               scale_y_continuous(labels = scales::dollar_format()) +
+                               theme(panel.grid.major = element_blank(), 
+                               panel.grid.minor = element_blank(),
+                               panel.background = element_blank(),
+                               axis.text.x = element_text(angle = 45, hjust = 1))
+
+Average_Price_by_Date_Boston
+
+ggsave("Boston Pricing over 2024.png", 
+       plot = Average_Price_by_Date_Boston, 
+       width = 10, height = 6, dpi = 300)
+```
+##Average Price by Neighborhood Boston
+```{r}
+Average_Price_Neighborhood_Boston = all_boston%>%
+  mutate(date = as.Date(date))%>%
+  group_by(neighbourhood_cleansed)%>%
+  summarize(Average_Price = mean(price))
+
+head(Average_Price_Neighborhood_Boston, 5)
+```
+
+##Visualizing Boston pricing by neighborhood
+
+```{r}
+
+boston_shp = st_read("C:/Machine Learning for Urban Analysis/Boston_Neighborhood_Boundaries_Approximated_by_2020_Census_Tracts.shp")  
+
+
+colnames(boston_shp)
+
+
+boston_shp = boston_shp %>%
+  rename(neighborhood = "neighborho")   
+
+
+Average_Price_Neighborhood_Boston = all_boston %>%
+  group_by(neighbourhood_cleansed) %>%
+  summarize(Average_Price = mean(price, na.rm = TRUE))
+
+
+#Need to standardize names across both files
+boston_shp$neighborhood = tolower(boston_shp$neighborhood)
+
+Average_Price_Neighborhood_Boston$neighbourhood_cleansed = tolower(Average_Price_Neighborhood_Boston$neighbourhood_cleansed)
+
+boston_map_data = boston_shp %>%
+  left_join(Average_Price_Neighborhood_Boston, by = c("neighborhood" = "neighbourhood_cleansed"))
+
+
+boston_neighborhood_pricing = ggplot(boston_map_data) +
+  geom_sf(aes(fill = Average_Price), color = "white") +  # White borders for neighborhoods
+  scale_fill_viridis_c(option = "plasma", name = "Avg Price (USD)") +  # Color scheme
+  labs(title = "Average Airbnb Price by Neighborhood in Boston",
+       subtitle = "Based on 2024 Airbnb Data",
+       caption = "Source: Airbnb Listings & 2020 Census Data") +
+  theme_minimal()
+
+boston_neighborhood_pricing
+
+ggsave("Boston Neighborhood Pricing  2024.png", 
+       plot = boston_neighborhood_pricing, 
+       width = 10, height = 6, dpi = 300)
+```
+
+
+
+
+
+
+##Time Series of Average Price for Chicago
+```{r}
+#Force Date in Chicago to be a date not posit format
+all_chicago$date = as.Date(all_chicago$date)
+#Group by date and find the mean price
+Average_Price_Time_Series_Chicago = all_chicago%>%
+  mutate(date = as.Date(date))%>%
+  group_by(date)%>%
+  summarize(Average_Price = mean(price))
+
+
+Average_Price_by_Date_Chicago= ggplot(Average_Price_Time_Series_Chicago, 
+                               mapping = aes(x = date, y = Average_Price))+
+                               geom_line(color = "purple", size = 1)+
+                               dark_theme_minimal()+
+                               labs(title = "Chicago Average Listing Price",
+                               subtitle = "by date", 
+                               x = "Date", 
+                               y = "Price")+
+                               scale_x_date(date_labels = "%b %d", date_breaks = "1 week")+
+                               scale_y_continuous(labels = scales::dollar_format()) +
+                               theme(panel.grid.major = element_blank(), 
+                               panel.grid.minor = element_blank(),
+                               panel.background = element_blank(),
+                               axis.text.x = element_text(angle = 45, hjust = 1))
+
+Average_Price_by_Date_Chicago
+
+ggsave("Chicago Pricing over 2024.png", 
+       plot = Average_Price_by_Date_Chicago, 
+       width = 10, height = 6, dpi = 300)
+```
+
+
+##Average Price by Neighborhood Chicago
+```{r}
+Average_Price_Neighborhood_Chicago = all_chicago%>%
+  mutate(date = as.Date(date))%>%
+  group_by(neighbourhood_cleansed)%>%
+  summarize(Average_Price = mean(price))
+
+head(Average_Price_Neighborhood_Chicago, 5)
+```
+
+
+##Visualizing Denver pricing by neighborhood
+
+```{r}
+
+chicago_shp = st_read("C:/Machine Learning for Urban Analysis/Chicago_Community_areas.shp")  
+
+
+colnames(chicago_shp)
+
+
+chicago_shp = chicago_shp%>%
+  rename(neighborhood = "community")   
+
+
+Average_Price_Neighborhood_Chicago = all_chicago%>%
+  group_by(neighbourhood_cleansed) %>%
+  summarize(Average_Price = mean(price, na.rm = TRUE))
+
+#Need to standardize names across both files
+chicago_shp$neighborhood = tolower(chicago_shp$neighborhood)
+
+Average_Price_Neighborhood_Chicago$neighbourhood_cleansed = tolower(Average_Price_Neighborhood_Chicago$neighbourhood_cleansed)
+
+
+
+chicago_map_data = chicago_shp%>%
+  left_join(Average_Price_Neighborhood_Chicago, by = c("neighborhood" = "neighbourhood_cleansed"))
+
+
+chicago_neighborhood_pricing = ggplot(chicago_map_data) +
+  geom_sf(aes(fill = Average_Price), color = "white") +
+  scale_fill_viridis_c(option = "plasma", name = "Avg Price (USD)") +
+  labs(title = "Average Airbnb Price by Neighborhood in Chicago",
+       subtitle = "Based on 2024 Airbnb Data",
+       caption = "Source: Airbnb Listings & 2020 Census Data") +
+  theme_minimal()
+
+chicago_neighborhood_pricing
+
+ggsave("Chicago Neighborhood Pricing 2024.png", 
+       plot = chicago_neighborhood_pricing, 
+       width = 10, height = 6, dpi = 300)
+```
+
+##Time Series of Average Price for Denver
+```{r}
+#Force Date in Denver to be a date not posit format
+all_denver$date = as.Date(all_denver$date)
+#Group by date and find the mean price
+Average_Price_Time_Series_Denver = all_denver%>%
+  mutate(date = as.Date(date))%>%
+  group_by(date)%>%
+  summarize(Average_Price = mean(price))
+
+
+Average_Price_by_Date_Denver= ggplot(Average_Price_Time_Series_Denver, 
+                               mapping = aes(x = date, y = Average_Price))+
+                               geom_line(color = "orange", size = 1)+
+                               dark_theme_minimal()+
+                               labs(title = "Denver Average Listing Price",
+                               subtitle = "by date", 
+                               x = "Date", 
+                               y = "Price")+
+                               scale_x_date(date_labels = "%b %d", date_breaks = "1 week")+
+                               scale_y_continuous(labels = scales::dollar_format()) +
+                               theme(panel.grid.major = element_blank(), 
+                               panel.grid.minor = element_blank(),
+                               panel.background = element_blank(),
+                               axis.text.x = element_text(angle = 45, hjust = 1))
+
+Average_Price_by_Date_Denver
+
+ggsave("Denver Pricing over 2024.png", 
+       plot = Average_Price_by_Date_Denver, 
+       width = 10, height = 6, dpi = 300)
+```
+
+
+##Average Price by Neighborhood Denver
+```{r}
+Average_Price_Neighborhood_Denver = all_denver%>%
+  mutate(date = as.Date(date))%>%
+  group_by(neighbourhood_cleansed)%>%
+  summarize(Average_Price = mean(price))
+
+head(Average_Price_Neighborhood_Denver, 5)
+```
+
+
+##Visualizing Denver pricing by neighborhood
+
+```{r}
+
+denver_shp = st_read("C:/Machine Learning for Urban Analysis/ADMN_NEIGHBORHOOD_A.shp")  
+
+
+colnames(denver_shp)
+
+
+denver_shp = denver_shp%>%
+  rename(neighborhood = "NBHD_NAME")   
+
+
+Average_Price_Neighborhood_Denver = all_denver%>%
+  group_by(neighbourhood_cleansed) %>%
+  summarize(Average_Price = mean(price, na.rm = TRUE))
+
+#Need to standardize names across both files
+denver_shp$neighborhood = tolower(denver_shp$neighborhood)
+
+Average_Price_Neighborhood_Denver$neighbourhood_cleansed = tolower(Average_Price_Neighborhood_Denver$neighbourhood_cleansed)
+
+denver_map_data = denver_shp%>%
+  left_join(Average_Price_Neighborhood_Denver, by = c("neighborhood" = "neighbourhood_cleansed"))
+
+
+denver_neighborhood_pricing = ggplot(denver_map_data) +
+  geom_sf(aes(fill = Average_Price), color = "white") +  # White borders for neighborhoods
+  scale_fill_viridis_c(option = "plasma", name = "Avg Price (USD)") +  # Color scheme
+  labs(title = "Average Airbnb Price by Neighborhood in Denver",
+       subtitle = "Based on 2024 Airbnb Data",
+       caption = "Source: Airbnb Listings & 2020 Census Data") +
+  theme_minimal()
+
+denver_neighborhood_pricing
+
+ggsave("Denver Neighborhood Pricing  2024.png", 
+       plot = denver_neighborhood_pricing, 
+       width = 10, height = 6, dpi = 300)
+```
+
+
+
+##Time Series of Average Price for New York
+```{r}
+#Force Date in New York to be a date not posit format
+all_ny$date = as.Date(all_ny$date)
+#Group by date and find the mean price
+Average_Price_Time_Series_NY = all_ny%>%
+  mutate(date = as.Date(date))%>%
+  group_by(date)%>%
+  summarize(Average_Price = mean(price))
+
+
+Average_Price_by_Date_NY= ggplot(Average_Price_Time_Series_NY, 
+                               mapping = aes(x = date, y = Average_Price))+
+                               geom_line(color = "red", size = 1)+
+                               dark_theme_minimal()+
+                               labs(title = "New York Average Listing Price",
+                               subtitle = "by date", 
+                               x = "Date", 
+                               y = "Price")+
+                               scale_x_date(date_labels = "%b %d", date_breaks = "1 week")+
+                               scale_y_continuous(labels = scales::dollar_format()) +
+                               theme(panel.grid.major = element_blank(), 
+                               panel.grid.minor = element_blank(),
+                               panel.background = element_blank(),
+                               axis.text.x = element_text(angle = 45, hjust = 1))
+
+Average_Price_by_Date_NY
+
+ggsave("New York Pricing over 2024.png", 
+       plot = Average_Price_by_Date_NY, 
+       width = 10, height = 6, dpi = 300)
+```
+
+
+##Average Price by Neighborhood New York
+```{r}
+Average_Price_Neighborhood_NY = all_ny%>%
+  mutate(date = as.Date(date))%>%
+  group_by(neighbourhood_cleansed)%>%
+  summarize(Average_Price = mean(price))
+
+head(Average_Price_Neighborhood_NY, 5)
+```
+
+
+##Visualizing New York pricing by neighborhood
+
+```{r}
+
+ny_shp = st_read("C:/Machine Learning for Urban Analysis/nyct2020.shp")  
+
+
+colnames(ny_shp)
+
+
+ny_shp = ny_shp%>%
+  rename(neighborhood = "NTAName")   
+
+
+Average_Price_Neighborhood_NY = all_ny %>%
+  group_by(neighbourhood_cleansed)%>%
+  summarize(Average_Price = mean(price, na.rm = TRUE))
+
+#Need to standardize names across both files
+ny_shp$neighborhood = tolower(ny_shp$neighborhood)
+
+Average_Price_Neighborhood_NY$neighbourhood_cleansed = tolower(Average_Price_Neighborhood_NY$neighbourhood_cleansed)
+
+
+ny_map_data = ny_shp%>%
+  left_join(Average_Price_Neighborhood_NY, by = c("neighborhood" = "neighbourhood_cleansed"))
+
+
+ny_neighborhood_pricing = ggplot(ny_map_data) +
+  geom_sf(aes(fill = Average_Price), color = "white") +
+  scale_fill_viridis_c(option = "plasma", name = "Avg Price (USD)") +
+  labs(title = "Average Airbnb Price by Neighborhood in New York",
+       subtitle = "Based on 2024 Airbnb Data",
+       caption = "Source: Airbnb Listings & 2020 Census Data") +
+  theme_minimal()
+
+ny_neighborhood_pricing
+
+ggsave("New York Neighborhood Pricing 2024.png", 
+       plot = ny_neighborhood_pricing, 
+       width = 10, height = 6, dpi = 300)
+```
+
+
+
+##Time Series of Average Price for San Francisco
+```{r}
+#Force Date in New York to be a date not posit format
+all_sf$date = as.Date(all_sf$date)
+#Group by date and find the mean price
+Average_Price_Time_Series_SF = all_sf%>%
+  mutate(date = as.Date(date))%>%
+  group_by(date)%>%
+  summarize(Average_Price = mean(price))
+
+
+Average_Price_by_Date_SF= ggplot(Average_Price_Time_Series_SF, 
+                               mapping = aes(x = date, y = Average_Price))+
+                               geom_line(color = "yellow", size = 1)+
+                               dark_theme_minimal()+
+                               labs(title = "San Francisco Average Listing Price",
+                               subtitle = "by date", 
+                               x = "Date", 
+                               y = "Price")+
+                               scale_x_date(date_labels = "%b %d", date_breaks = "1 week")+
+                               scale_y_continuous(labels = scales::dollar_format()) +
+                               theme(panel.grid.major = element_blank(), 
+                               panel.grid.minor = element_blank(),
+                               panel.background = element_blank(),
+                               axis.text.x = element_text(angle = 45, hjust = 1))
+
+Average_Price_by_Date_SF
+
+ggsave("San Francisco Pricing over 2024.png", 
+       plot = Average_Price_by_Date_SF, 
+       width = 10, height = 6, dpi = 300)
+```
+
+
+##Average Price by Neighborhood San Francisco
+```{r}
+Average_Price_Neighborhood_SF = all_sf%>%
+  mutate(date = as.Date(date))%>%
+  group_by(neighbourhood_cleansed)%>%
+  summarize(Average_Price = mean(price))
+
+head(Average_Price_Neighborhood_SF, 5)
+```
+
+
+##Visualizing San Francisco pricing by neighborhood
+
+```{r}
+
+sf_shp = st_read("C:/Machine Learning for Urban Analysis/geo_export_a12eec05-aade-4fa4-8b8d-62198e99b02c.shp")  
+
+
+colnames(sf_shp)
+
+
+sf_shp = sf_shp%>%
+  rename(neighborhood = "nhood")   
+
+
+Average_Price_Neighborhood_SF = all_sf %>%
+  group_by(neighbourhood_cleansed)%>%
+  summarize(Average_Price = mean(price, na.rm = TRUE))
+
+
+#Need to standardize names across both files
+sf_shp$neighborhood = tolower(sf_shp$neighborhood)
+
+Average_Price_Neighborhood_SF$neighbourhood_cleansed = tolower(Average_Price_Neighborhood_SF$neighbourhood_cleansed)
+
+sf_map_data = sf_shp%>%
+  left_join(Average_Price_Neighborhood_SF, by = c("neighborhood" = "neighbourhood_cleansed"))
+
+
+sf_neighborhood_pricing = ggplot(sf_map_data) +
+  geom_sf(aes(fill = Average_Price), color = "white") +
+  scale_fill_viridis_c(option = "plasma", name = "Avg Price (USD)") +
+  labs(title = "Average Airbnb Price by Neighborhood in San Francisco",
+       subtitle = "Based on 2024 Airbnb Data",
+       caption = "Source: Airbnb Listings & 2020 Census Data") +
+  theme_minimal()
+
+sf_neighborhood_pricing
+
+ggsave("San Francisco Neighborhood Pricing 2024.png", 
+       plot = sf_neighborhood_pricing, 
+       width = 10, height = 6, dpi = 300)
+```
+
+##Trying to group by List ID and look at availibility over time
+```{r}
+#Group by date and find the average number of available listings 
+Average_Total_Listings_Time_Series_Boston = all_boston%>%
+  mutate(date = as.Date(date), available = as.numeric(available))%>%
+  group_by(date, listing_id)%>%  
+  summarize(Listings_Available = sum(available) > 0, .groups = "drop")%>% 
+  group_by(date)%>%
+  summarize(Average_Listings_Available = mean(Listings_Available), .groups = "drop")
+
+
+head(Average_Total_Listings_Time_Series_Boston)
+```
+##Plotting Boston Listings over Time
+```{r}
+Average_Listings_by_Date_Boston = ggplot(Average_Total_Listings_Time_Series_Boston, 
+                               mapping = aes(x = date, y = Average_Listings_Available))+
+                               geom_line(color = "steelblue", size = 1)+
+                               dark_theme_minimal()+
+                               labs(title = "Boston Average Listings Available",
+                               subtitle = "by date", 
+                               x = "Date", 
+                               y = "Number of Listings")+
+                               scale_x_date(date_labels = "%b %d", date_breaks = "1 week")+
+                               theme(panel.grid.major = element_blank(), 
+                               panel.grid.minor = element_blank(),
+                               panel.background = element_blank(),
+                               axis.text.x = element_text(angle = 45, hjust = 1))
+
+Average_Listings_by_Date_Boston
+
+Average_Listings_by_Date_Boston = Average_Listings_by_Date_Boston+
+  geom_point(data = Average_Total_Listings_Time_Series_Boston %>% filter(date ==    as.Date("2024-04-15")),aes(x = date, y = Average_Listings_Available),
+             color = "red", size = 3)+
+  annotate("text", x = as.Date("2024-04-15"), y =    min(Average_Total_Listings_Time_Series_Boston$Average_Listings_Available)+ 0.05,
+label = "Boston Marathon", color = "red", fontface = "bold", angle = 45, vjust = -1)
+
+
+Average_Listings_by_Date_Boston
+
+ggsave("Boston Listings over 2024.png", 
+       plot = Average_Listings_by_Date_Boston, 
+       width = 10, height = 6, dpi = 300)
+```
+
+
+##Chicago Listings over Time
+```{r}
+#Group by date and find the average number of available listings 
+Average_Total_Listings_Time_Series_Chicago = all_chicago%>%
+  mutate(date = as.Date(date), available = as.numeric(available))%>%
+  group_by(date, listing_id)%>%  
+  summarize(Listings_Available = sum(available) > 0, .groups = "drop")%>% 
+  group_by(date)%>%
+  summarize(Average_Listings_Available = mean(Listings_Available), .groups = "drop")
+
+
+head(Average_Total_Listings_Time_Series_Chicago)
+```
+
+
+##Plotting Chicago Listings over Time
+```{r}
+Average_Listings_by_Date_Chicago = ggplot(Average_Total_Listings_Time_Series_Chicago, 
+                               mapping = aes(x = date, y = Average_Listings_Available))+
+                               geom_line(color = "purple", size = 1)+
+                               dark_theme_minimal()+
+                               labs(title = "Chicago Average Listings Available",
+                               subtitle = "by date", 
+                               x = "Date", 
+                               y = "Number of Listings")+
+                               scale_x_date(date_labels = "%b %d", date_breaks = "1 week")+
+                               theme(panel.grid.major = element_blank(), 
+                               panel.grid.minor = element_blank(),
+                               panel.background = element_blank(),
+                               axis.text.x = element_text(angle = 45, hjust = 1))
+
+Average_Listings_by_Date_Chicago
+
+# Find the y-value (dip) for October 13
+chicago_marathon_dip = Average_Total_Listings_Time_Series_Chicago%>%
+  filter(date == as.Date("2025-10-13"))%>%
+  pull(Average_Listings_Available)
+
+# Add dashed line at Oct 13 and correctly position text
+Average_Listings_by_Date_Chicago = Average_Listings_by_Date_Chicago+
+  geom_vline(xintercept = as.Date("2025-10-13"), 
+             linetype = "dashed", color = "green", size = 1)+
+  annotate("text", x = as.Date("2025-10-13"), 
+           y = chicago_marathon_dip - 0.02, 
+           label = "Chicago Marathon", 
+           color = "green", 
+           fontface = "bold", 
+           angle = 0, 
+           vjust = -1, 
+           hjust = 0.5) 
+
+# Display the updated plot
+Average_Listings_by_Date_Chicago
+
+
+ggsave("Chicago Listings over 2024.png", 
+       plot = Average_Listings_by_Date_Chicago, 
+       width = 10, height = 6, dpi = 300)
+```
+
+##Denver Listings over time
+```{r}
+#Group by date and find the average number of available listings 
+Average_Total_Listings_Time_Series_Denver = all_denver%>%
+  mutate(date = as.Date(date), available = as.numeric(available))%>%
+  group_by(date, listing_id)%>%  
+  summarize(Listings_Available = sum(available) > 0, .groups = "drop")%>% 
+  group_by(date)%>%
+  summarize(Average_Listings_Available = mean(Listings_Available), .groups = "drop")
+
+
+head(Average_Total_Listings_Time_Series_Denver)
+```
+
+
+##Plotting Denver Listings over Time
+```{r}
+Average_Listings_by_Date_Denver = ggplot(Average_Total_Listings_Time_Series_Denver, 
+                               mapping = aes(x = date, y = Average_Listings_Available))+
+                               geom_line(color = "orange", size = 1)+
+                               dark_theme_minimal()+
+                               labs(title = "Denver Average Listings Available",
+                               subtitle = "by date", 
+                               x = "Date", 
+                               y = "Number of Listings")+
+                               scale_x_date(date_labels = "%b %d", date_breaks = "1 week")+
+                               theme(panel.grid.major = element_blank(), 
+                               panel.grid.minor = element_blank(),
+                               panel.background = element_blank(),
+                               axis.text.x = element_text(angle = 45, hjust = 1))
+
+Average_Listings_by_Date_Denver
+
+# Find the y-value (dip) for October 13
+denver_marathon_dip = Average_Total_Listings_Time_Series_Denver%>%
+  filter(date == as.Date("2024-5-18"))%>%
+  pull(Average_Listings_Available)
+
+# Add dashed line at Oct 13 and correctly position text
+Average_Listings_by_Date_Denver = Average_Listings_by_Date_Denver+
+  geom_vline(xintercept = as.Date("2024-5-18"), 
+             linetype = "dashed", color = "blue", size = 1)+
+  annotate("text", x = as.Date("2024-5-18"), 
+           y = denver_marathon_dip - 0.02, 
+           label = "Denver Marathon", 
+           color = "blue", 
+           fontface = "bold", 
+           angle = 0, 
+           vjust = +2, 
+           hjust = 0.5) 
+
+# Display the updated plot
+Average_Listings_by_Date_Denver
+
+ggsave("Denver Listings over 2024.png", 
+       plot = Average_Listings_by_Date_Denver, 
+       width = 10, height = 6, dpi = 300)
+```
+
+##New York Listings over time
+```{r}
+#Group by date and find the average number of available listings 
+Average_Total_Listings_Time_Series_NY = all_ny%>%
+  mutate(date = as.Date(date), available = as.numeric(available))%>%
+  group_by(date, listing_id)%>%  
+  summarize(Listings_Available = sum(available) > 0, .groups = "drop")%>% 
+  group_by(date)%>%
+  summarize(Average_Listings_Available = mean(Listings_Available), .groups = "drop")
+
+
+head(Average_Total_Listings_Time_Series_NY)
+```
+
+
+##Plotting New York Listings over Time
+```{r}
+Average_Listings_by_Date_NY = ggplot(Average_Total_Listings_Time_Series_NY, 
+                               mapping = aes(x = date, y = Average_Listings_Available))+
+                               geom_line(color = "red", size = 1)+
+                               dark_theme_minimal()+
+                               labs(title = "New York Average Listings Available",
+                               subtitle = "by date", 
+                               x = "Date", 
+                               y = "Number of Listings")+
+                               scale_x_date(date_labels = "%b %d", date_breaks = "1 week")+
+                               theme(panel.grid.major = element_blank(), 
+                               panel.grid.minor = element_blank(),
+                               panel.background = element_blank(),
+                               axis.text.x = element_text(angle = 45, hjust = 1))
+
+Average_Listings_by_Date_NY
+
+#Dip for NY Marathon
+ny_marathon_dip = Average_Total_Listings_Time_Series_NY%>%
+  filter(date == as.Date("2024-11-03"))%>%
+  pull(Average_Listings_Available)
+
+# Add dashed line at Oct 13 and correctly position text
+Average_Listings_by_Date_NY = Average_Listings_by_Date_NY+
+  geom_vline(xintercept = as.Date("2024-11-03"), 
+             linetype = "dashed", color = "navy", size = 1)+
+  annotate("text", x = as.Date("2024-11-03"), 
+           y = ny_marathon_dip - 0.02, 
+           label = "New York Marathon", 
+           color = "navy", 
+           fontface = "bold", 
+           angle = 0, 
+           vjust = +2, 
+           hjust = 0.5) 
+
+# Display the updated plot
+Average_Listings_by_Date_NY
+
+ggsave("New York Listings over 2024.png", 
+       plot = Average_Listings_by_Date_NY, 
+       width = 10, height = 6, dpi = 300)
+```
+
+##San Francisco Listings over time
+```{r}
+#Group by date and find the average number of available listings 
+Average_Total_Listings_Time_Series_SF = all_sf%>%
+  mutate(date = as.Date(date), available = as.numeric(available))%>%
+  group_by(date, listing_id)%>%  
+  summarize(Listings_Available = sum(available) > 0, .groups = "drop")%>% 
+  group_by(date)%>%
+  summarize(Average_Listings_Available = mean(Listings_Available), .groups = "drop")
+
+
+head(Average_Total_Listings_Time_Series_SF)
+```
+
+
+##Plotting San Francisco Listings over Time
+```{r}
+Average_Listings_by_Date_SF = ggplot(Average_Total_Listings_Time_Series_SF, 
+                               mapping = aes(x = date, y = Average_Listings_Available))+
+                               geom_line(color = "yellow", size = 1)+
+                               dark_theme_minimal()+
+                               labs(title = "San Francisco Average Listings Available",
+                               subtitle = "by date", 
+                               x = "Date", 
+                               y = "Number of Listings")+
+                               scale_x_date(date_labels = "%b %d", date_breaks = "1 week")+
+                               theme(panel.grid.major = element_blank(), 
+                               panel.grid.minor = element_blank(),
+                               panel.background = element_blank(),
+                               axis.text.x = element_text(angle = 45, hjust = 1))
+
+Average_Listings_by_Date_SF
+
+#Find the y-value (dip) for October 13
+sf_marathon_dip = Average_Total_Listings_Time_Series_SF%>%
+  filter(date == as.Date("2024-7-27"))%>%
+  pull(Average_Listings_Available)
+
+#Add dashed line at Oct 13 and correctly position text
+Average_Listings_by_Date_SF = Average_Listings_by_Date_SF+
+  geom_vline(xintercept = as.Date("2024-7-27"), 
+             linetype = "dashed", color = "steelblue", size = 1)+
+  annotate("text", x = as.Date("2024-7-27"), 
+           y = sf_marathon_dip - 0.02, 
+           label = "SF Marathon", 
+           color = "steelblue", 
+           fontface = "bold", 
+           angle = 0, 
+           vjust = +2, 
+           hjust = 0.5) 
+
+# Display the updated plot
+Average_Listings_by_Date_SF
+
+ggsave("San Francisco Listings over 2024.png", 
+       plot = Average_Listings_by_Date_SF, 
+       width = 10, height = 6, dpi = 300)
+```
+
+## Analyzing impact on regional market share Boston
+```{r}
+
+#Boston_Market_Impact_Analysis = all_boston%>%
+#  mutate(date = as.Date(date), available = as.numeric(available))%>%
+#  group_by(date) %>%  
+#  summarize(Listings_Available = sum(available > 0), .groups = "drop")
+
+#head(Boston_Market_Impact_Analysis, 5)
+
+#Get the number of unique listings available per day
+Boston_Market_Impact_Analysis = all_boston%>%
+  mutate(date = as.Date(date), available = as.numeric(available))%>%
+  group_by(date, listing_id)%>%  
+  summarize(Listings_Available = max(available), .groups = "drop")%>%
+  group_by(date) %>%
+  summarize(Listings_Available = sum(Listings_Available > 0), .groups = "drop")
+
+head(Boston_Market_Impact_Analysis, 5)
+
+```
+
+##Now find the rolling average number of listings available over the last 2 weeks before the race Boston
+```{r}
+#Crate date ranges I want to analyze the number of average available listings 2 weeks before vs the 4 day stretch from 4/12-4/15
+boston_before_start = as.Date("2024-03-29")
+boston_before_end = as.Date("2024-04-11")
+boston_marathon_start = as.Date("2024-04-12")
+boston_marathon_end = as.Date("2024-04-15") #14 is sun 15 is mon (day of)
+
+#pre-marathon average
+boston_pre_marathon_avg = Boston_Market_Impact_Analysis%>%
+  filter(date >= boston_before_start & date <= boston_before_end)%>%
+  summarize(Average_Listings_Before = mean(Listings_Available))
+
+#4-day marathon period average
+boston_marathon_avg = Boston_Market_Impact_Analysis%>%
+  filter(date >= boston_marathon_start & date <= boston_marathon_end)%>%
+  summarize(Average_Listings_During = mean(Listings_Available))
+
+#Difference in average availability
+boston_market_impact = boston_pre_marathon_avg$Average_Listings_Before - boston_marathon_avg$Average_Listings_During
+
+
+boston_pre_marathon_avg
+boston_marathon_avg
+boston_market_impact
+
+```
+
+
+## Analyzing impact on regional market share Chicago
+```{r}
+
+#Get the number of unique listings available per day
+Chicago_Market_Impact_Analysis = all_chicago%>%
+  mutate(date = as.Date(date), available = as.numeric(available))%>%
+  group_by(date, listing_id)%>%  
+  summarize(Listings_Available = max(available), .groups = "drop")%>%
+  group_by(date) %>%
+  summarize(Listings_Available = sum(Listings_Available > 0), .groups = "drop")
+
+head(Chicago_Market_Impact_Analysis, 5)
+
+```
+
+
+##Now find the rolling average number of listings available over the last 2 weeks before the race Chicago
+```{r}
+#Crate date ranges I want to analyze the number of average available listings 2 weeks before vs the 4 day stretch from 10/11 to 10/14
+chicago_before_start = as.Date("2025-09-26")
+chicago_before_end = as.Date("2025-10-10")
+chicago_marathon_start = as.Date("2025-10-11")
+chicago_marathon_end = as.Date("2025-10-13") #13 is sun (day of) 14 is mon
+
+#pre-marathon average
+chicago_pre_marathon_avg = Chicago_Market_Impact_Analysis%>%
+  filter(date >= chicago_before_start & date <= chicago_before_end)%>%
+  summarize(Average_Listings_Before = mean(Listings_Available))
+
+#4-day marathon period average
+chicago_marathon_avg = Chicago_Market_Impact_Analysis%>%
+  filter(date >= chicago_marathon_start & date <= chicago_marathon_end)%>%
+  summarize(Average_Listings_During = mean(Listings_Available))
+
+#Difference in average availability
+chicago_market_impact = chicago_pre_marathon_avg$Average_Listings_Before - chicago_marathon_avg$Average_Listings_During
+
+
+chicago_pre_marathon_avg
+chicago_marathon_avg
+chicago_market_impact
+
+```
+
+
+## Analyzing impact on regional market share Denver
+```{r}
+
+#Get the number of unique listings available per day
+Denver_Market_Impact_Analysis = all_denver%>%
+  mutate(date = as.Date(date), available = as.numeric(available))%>%
+  group_by(date, listing_id)%>%  
+  summarize(Listings_Available = max(available), .groups = "drop")%>%
+  group_by(date) %>%
+  summarize(Listings_Available = sum(Listings_Available > 0), .groups = "drop")
+
+head(Denver_Market_Impact_Analysis, 5)
+
+```
+
+
+##Now find the rolling average number of listings available over the last 2 weeks before the race Denver
+```{r}
+#Crate date ranges I want to analyze the number of average available listings 2 weeks before vs the 4 day stretch from 10/11 to 10/14
+den_before_start = as.Date("2024-05-02")
+den_before_end = as.Date("2024-05-16")
+den_marathon_start = as.Date("2024-05-17")
+den_marathon_end = as.Date("2024-05-19") #19 is sun (day of) 20 is mon
+
+#pre-marathon average
+Denver_pre_marathon_avg = Denver_Market_Impact_Analysis%>%
+  filter(date >= den_before_start & date <= den_before_end)%>%
+  summarize(Average_Listings_Before = mean(Listings_Available))
+
+#4-day marathon period average
+Denver_marathon_avg = Denver_Market_Impact_Analysis%>%
+  filter(date >= den_marathon_start & date <= den_marathon_end)%>%
+  summarize(Average_Listings_During = mean(Listings_Available))
+
+#Difference in average availability
+Denver_market_impact = Denver_pre_marathon_avg$Average_Listings_Before - Denver_marathon_avg$Average_Listings_During
+
+
+Denver_pre_marathon_avg
+Denver_marathon_avg
+Denver_market_impact
+
+```
+
+
+## Analyzing impact on regional market share New York
+```{r}
+
+#Get the number of unique listings available per day
+NY_Market_Impact_Analysis = all_ny%>%
+  mutate(date = as.Date(date), available = as.numeric(available))%>%
+  group_by(date, listing_id)%>%  
+  summarize(Listings_Available = max(available), .groups = "drop")%>%
+  group_by(date) %>%
+  summarize(Listings_Available = sum(Listings_Available > 0), .groups = "drop")
+
+head(NY_Market_Impact_Analysis, 5)
+
+```
+
+
+##Now find the rolling average number of listings available over the last 2 weeks before the race New York
+```{r}
+#Crate date ranges I want to analyze the number of average available listings 2 weeks before vs the 4 day stretch from 10/11 to 10/14
+ny_before_start = as.Date("2024-10-17")
+ny_before_end = as.Date("2024-10-31")
+ny_marathon_start = as.Date("2024-11-1")
+ny_marathon_end = as.Date("2024-11-03") # 3 is sun (day of) 4 is mon
+
+#pre-marathon average
+NY_pre_marathon_avg = NY_Market_Impact_Analysis%>%
+  filter(date >= ny_before_start & date <= ny_before_end)%>%
+  summarize(Average_Listings_Before = mean(Listings_Available))
+
+#4-day marathon period average
+NY_marathon_avg = NY_Market_Impact_Analysis%>%
+  filter(date >= ny_marathon_start & date <= ny_marathon_end)%>%
+  summarize(Average_Listings_During = mean(Listings_Available))
+
+#Difference in average availability
+NY_market_impact = NY_pre_marathon_avg$Average_Listings_Before - NY_marathon_avg$Average_Listings_During
+
+
+NY_pre_marathon_avg
+NY_marathon_avg
+NY_market_impact
+
+```
+
+
+## Analyzing impact on regional market share San Francisco
+```{r}
+
+#Get the number of unique listings available per day
+SF_Market_Impact_Analysis = all_sf%>%
+  mutate(date = as.Date(date), available = as.numeric(available))%>%
+  group_by(date, listing_id)%>%  
+  summarize(Listings_Available = max(available), .groups = "drop")%>%
+  group_by(date) %>%
+  summarize(Listings_Available = sum(Listings_Available > 0), .groups = "drop")
+
+head(SF_Market_Impact_Analysis, 5)
+```
+
+
+##Now find the rolling average number of listings available over the last 2 weeks before the race San Francisco
+```{r}
+#Crate date ranges I want to analyze the number of average available listings 2 weeks before vs the 4 day stretch from 10/11 to 10/14
+sf_before_start = as.Date("2024-07-11")
+sf_before_end = as.Date("2024-07-25")
+sf_marathon_start = as.Date("2024-07-26")
+sf_marathon_end = as.Date("2024-07-28") #28 is sun (day of) 19 is mon
+
+#pre-marathon average
+SF_pre_marathon_avg = SF_Market_Impact_Analysis%>%
+  filter(date >= sf_before_start & date <= sf_before_end)%>%
+  summarize(Average_Listings_Before = mean(Listings_Available))
+
+#4-day marathon period average
+SF_marathon_avg = SF_Market_Impact_Analysis%>%
+  filter(date >= sf_marathon_start & date <= sf_marathon_end)%>%
+  summarize(Average_Listings_During = mean(Listings_Available))
+
+#Difference in average availability
+SF_market_impact = SF_pre_marathon_avg$Average_Listings_Before - SF_marathon_avg$Average_Listings_During
+
+
+SF_pre_marathon_avg
+SF_marathon_avg
+SF_market_impact
+
+```
+
+
+##Creating Race Weekend Cols binary numeric in Data Frames
+```{r}
+all_boston = all_boston%>%
+  mutate(race_weekend = ifelse(date %in% as.Date(c("2024-04-12", "2024-04-13", "2024-04-14","2024-04-15")), 1, 0))
+
+all_chicago = all_chicago%>%
+  mutate(race_weekend = ifelse(date %in% as.Date(c("2025-10-11", "2025-10-12", "2025-10-13")), 1, 0))
+
+all_denver = all_denver%>%
+  mutate(race_weekend = ifelse(date %in% as.Date(c("2024-05-17", "2024-05-18", "2024-05-19")), 1, 0))
+
+all_ny = all_ny%>%
+  mutate(race_weekend = ifelse(date %in% as.Date(c("2024-11-01", "2024-11-02", "2024-11-03")), 1, 0))
+
+all_sf = all_sf%>%
+  mutate(race_weekend = ifelse(date %in% as.Date(c("2024-07-26", "2024-07-27", "2024-07-28")), 1, 0))
+```
+
+```{r}
+table(all_boston$race_weekend)
+
+table(all_chicago$race_weekend)
+
+table(all_denver$race_weekend)
+
+table(all_ny$race_weekend)
+
+table(all_sf$race_weekend)
+```
+
+##Seeing if Race weekend has an impact on price for Boston
+```{r}
+Boston_Price_Race_Weekend = lm(price ~ race_weekend, data = all_boston)
+summary(Boston_Price_Race_Weekend)
+```
+
+##Seeing if Race weekend has an impact on price for Chicago
+```{r}
+Chicago_Price_Race_Weekend = lm(price ~ race_weekend, data = all_chicago)
+summary(Chicago_Price_Race_Weekend)
+```
+
+##Seeing if Race weekend has an impact on price for Denver
+```{r}
+Denver_Price_Race_Weekend = lm(price ~ race_weekend, data = all_denver)
+summary(Denver_Price_Race_Weekend)
+```
+
+##Seeing if Race weekend has an impact on price for New York
+```{r}
+NY_Price_Race_Weekend = lm(price ~ race_weekend, data = all_ny)
+summary(NY_Price_Race_Weekend)
+```
+
+##Seeing if Race weekend has an impact on price for San Francisco
+```{r}
+SF_Price_Race_Weekend = lm(price ~ race_weekend, data = all_sf)
+summary(SF_Price_Race_Weekend)
+```
+
+##Grouping by Neighborhood and Race Weekend
+```{r}
+Average_Price_Neighborhood_Boston_Weekend = all_boston%>%
+  group_by(neighbourhood_cleansed, race_weekend)%>%
+  summarize(Average_Price = mean(price, na.rm = TRUE), .groups = "drop")
+
+Average_Price_Neighborhood_Chicago_Weekend = all_chicago%>%
+  group_by(neighbourhood_cleansed, race_weekend)%>%
+  summarize(Average_Price = mean(price, na.rm = TRUE), .groups = "drop")
+
+Average_Price_Neighborhood_Denver_Weekend = all_denver%>%
+  group_by(neighbourhood_cleansed, race_weekend)%>%
+  summarize(Average_Price = mean(price, na.rm = TRUE), .groups = "drop")
+
+Average_Price_Neighborhood_NY_Weekend = all_ny%>%
+  group_by(neighbourhood_cleansed, race_weekend)%>%
+  summarize(Average_Price = mean(price, na.rm = TRUE), .groups = "drop")
+
+Average_Price_Neighborhood_SF_Weekend = all_sf%>%
+  group_by(neighbourhood_cleansed, race_weekend)%>%
+  summarize(Average_Price = mean(price, na.rm = TRUE), .groups = "drop")
+```
+
+
+##Seeing if Race Weekend Has an Impact on Average Price by Neighborhood Boston
+```{r}
+boston_neighborhood_price_race_weekend = lm(Average_Price ~ race_weekend, data = Average_Price_Neighborhood_Boston_Weekend)
+
+summary(boston_neighborhood_price_race_weekend)
+```
+
+##Seeing if Race Weekend Has an Impact on Average Price by Neighborhood Chicago
+```{r}
+chicago_neighborhood_price_race_weekend = lm(Average_Price ~ race_weekend, data = Average_Price_Neighborhood_Chicago_Weekend)
+
+summary(chicago_neighborhood_price_race_weekend)
+```
+
+##Seeing if Race Weekend Has an Impact on Average Price by Neighborhood Denver
+```{r}
+denver_neighborhood_price_race_weekend = lm(Average_Price ~ race_weekend, data = Average_Price_Neighborhood_Denver_Weekend)
+
+summary(denver_neighborhood_price_race_weekend)
+```
+
+##Seeing if Race Weekend Has an Impact on Average Price by Neighborhood New York
+```{r}
+ny_neighborhood_price_race_weekend = lm(Average_Price ~ race_weekend, data = Average_Price_Neighborhood_NY_Weekend)
+
+summary(ny_neighborhood_price_race_weekend)
+```
+
+##Seeing if Race Weekend Has an Impact on Average Price by Neighborhood San Francisco
+```{r}
+sf_neighborhood_price_race_weekend = lm(Average_Price ~ race_weekend, data = Average_Price_Neighborhood_SF_Weekend)
+
+summary(sf_neighborhood_price_race_weekend)
+```
+
+##Race Weekends and Availability (Adding race weekend into total listings df's)
+```{r}
+#Boston
+Average_Total_Listings_Race_Weekend_Boston = all_boston%>%
+  mutate(date = as.Date(date), 
+         available = as.numeric(available),
+         race_weekend = ifelse(date %in% c("2024-04-12", "2024-04-13", "2024-04-14", "2024-04-15"), 1, 0))%>%
+  group_by(date, race_weekend, listing_id)%>%
+  summarize(Listings_Available = sum(available) > 0, .groups = "drop")%>% 
+  group_by(date, race_weekend)%>%
+  summarize(Average_Listings_Available = mean(Listings_Available), .groups = "drop")
+
+#Chicago
+Average_Total_Listings_Race_Weekend_Chicago = all_chicago%>%
+  mutate(date = as.Date(date), 
+         available = as.numeric(available),
+         race_weekend = ifelse(date %in% c("2025-10-11", "2025-10-12", "2025-10-13"), 1, 0))%>%
+  group_by(date, race_weekend, listing_id)%>%  
+  summarize(Listings_Available = sum(available) > 0, .groups = "drop")%>% 
+  group_by(date, race_weekend)%>%
+  summarize(Average_Listings_Available = mean(Listings_Available), .groups = "drop")
+
+#Denver
+Average_Total_Listings_Race_Weekend_Denver = all_denver%>%
+  mutate(date = as.Date(date), 
+         available = as.numeric(available),
+         race_weekend = ifelse(date %in% c("2024-05-17", "2024-05-18", "2024-05-19"), 1, 0))%>%
+  group_by(date, race_weekend, listing_id)%>%  
+  summarize(Listings_Available = sum(available) > 0, .groups = "drop")%>% 
+  group_by(date, race_weekend)%>%
+  summarize(Average_Listings_Available = mean(Listings_Available), .groups = "drop")
+
+#New York
+Average_Total_Listings_Race_Weekend_NY = all_ny%>%
+  mutate(date = as.Date(date), 
+         available = as.numeric(available),
+         race_weekend = ifelse(date %in% c("2024-11-01", "2024-11-02", "2024-11-03"), 1, 0))%>%
+  group_by(date, race_weekend, listing_id)%>%  
+  summarize(Listings_Available = sum(available) > 0, .groups = "drop")%>% 
+  group_by(date, race_weekend)%>%
+  summarize(Average_Listings_Available = mean(Listings_Available), .groups = "drop")
+
+#San Francisco
+Average_Total_Listings_Race_Weekend_SF = all_sf%>%
+  mutate(date = as.Date(date), 
+         available = as.numeric(available),
+         race_weekend = ifelse(date %in% c("2024-07-26", "2024-07-27", "2024-07-28"), 1, 0))%>%
+  group_by(date, race_weekend, listing_id)%>%  
+  summarize(Listings_Available = sum(available) > 0, .groups = "drop")%>% 
+  group_by(date, race_weekend)%>%
+  summarize(Average_Listings_Available = mean(Listings_Available), .groups = "drop")
+
+```
+
+
+##Boston Listings and Race Weekends Linear Regression
+```{r}
+Boston_listings_race_weekend = lm(Average_Listings_Available ~ race_weekend, data = Average_Total_Listings_Race_Weekend_Boston)
+
+summary(Boston_listings_race_weekend)
+```
+
+
+##Chicago Listings and Race Weekends Linear Regression
+```{r}
+Chicago_listings_race_weekend = lm(Average_Listings_Available ~ race_weekend, data = Average_Total_Listings_Race_Weekend_Chicago)
+
+summary(Chicago_listings_race_weekend)
+```
+
+
+##Denver Listings and Race Weekends Linear Regression
+```{r}
+Denver_listings_race_weekend = lm(Average_Listings_Available ~ race_weekend, data = Average_Total_Listings_Race_Weekend_Denver)
+
+summary(Denver_listings_race_weekend)
+```
+
+
+##New York Listings and Race Weekends Linear Regression
+```{r}
+NY_listings_race_weekend = lm(Average_Listings_Available ~ race_weekend, data = Average_Total_Listings_Race_Weekend_NY)
+
+summary(NY_listings_race_weekend)
+```
+
+
+##San Francisco Listings and Race Weekends Linear Regression
+```{r}
+SF_listings_race_weekend = lm(Average_Listings_Available ~ race_weekend, data = Average_Total_Listings_Race_Weekend_SF)
+
+summary(SF_listings_race_weekend)
+```
+
+
+
+
