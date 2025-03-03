@@ -1,0 +1,574 @@
+---
+title: "ML Urban Analysis Project"
+author: "Drew Duffy"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(sf)
+library(mapview)
+library(ggmap)
+```
+
+
+# API KEY and Marathon Key Points
+```{r}
+
+API_key <- "59b8134f-d35f-4560-971a-fa98eb7f6223"
+register_stadiamaps(API_key)
+
+marathon_points <- read.csv("C://Users/Drew Duffy/Downloads/Marathon_points.csv")
+
+
+```
+
+
+# Data for Boston
+  - Last Marathon Date: April 15, 2024
+
+```{r Boston}
+
+# zip("allboston_rds.zip", "all_boston.rds")
+
+
+
+all_boston <- readRDS("all_boston.rds")
+
+# calendar 
+# boscalendar <- read.csv("C://Users/Drew Duffy/Downloads/bostonmarathon_calendar.csv.gz")
+# 
+# boscalendar_clean <- boscalendar %>% 
+#   mutate(date = as.Date(date, format = "%Y-%m-%d"), 
+#          available = ifelse(available == "t", 1, 0), 
+#          price = as.numeric(gsub("[^0-9.]", "", price))) 
+# 
+# # listings 
+# boslistings <- read.csv("C://Users/Drew Duffy/Downloads/listings (2).csv.gz") %>% 
+#   rename(listing_id = id) %>% 
+#   select(-price, -maximum_nights, -minimum_nights)
+# 
+# 
+# all_boston <- merge(boscalendar_clean, boslistings, by = "listing_id")
+
+# all_boston <- all_boston %>%
+#   select(
+#     listing_id, date, available, price, minimum_nights, maximum_nights, listing_url,
+#     name, description, neighborhood_overview, picture_url, host_id, host_url,
+#     host_name, host_since, host_location, host_about, host_response_time,
+#     host_response_rate, host_neighbourhood, host_listings_count,
+#     host_total_listings_count, neighbourhood, neighbourhood_cleansed,
+#     neighbourhood_group_cleansed, latitude, longitude, property_type, room_type,
+#     accommodates, bathrooms, bathrooms_text, bedrooms, beds, amenities,
+#     minimum_minimum_nights, maximum_minimum_nights, minimum_maximum_nights,
+#     maximum_maximum_nights, minimum_nights_avg_ntm, maximum_nights_avg_ntm,
+#     has_availability, availability_30, availability_60, availability_90,
+#     availability_365, number_of_reviews, review_scores_rating,
+#     review_scores_accuracy, review_scores_cleanliness, review_scores_checkin,
+#     review_scores_communication, review_scores_location, review_scores_value,
+#     reviews_per_month, marathon_week
+#   )
+
+# all_boston <- all_boston %>% 
+#   mutate(marathon_week = if_else(date >= ymd("2024-04-11") & date <= ymd("2024-04-18"), 1, 0))
+
+# saveRDS(all_boston, "all_boston.rds")
+
+#zip("allboston_rds.zip", "all_boston.rds")
+
+```
+
+# Data for New York
+ - Last Marathon Date: November 3, 2024
+
+```{r New York}
+
+all_ny <- readRDS("all_ny.rds")
+
+# # calendar 
+# 
+# nycalendar <- read.csv("C:\\Users\\Drew Duffy\\OneDrive\\Spring '25 MSBA\\Urban Analysis\\Final\\NYC\\nyccal.csv.gz")
+# 
+# 
+# 
+# nycalendar_clean <- nycalendar %>%
+#    mutate(date = as.Date(date, format = "%Y-%m-%d"),
+#           available = ifelse(available == "t", 1, 0),
+#            price = as.numeric(gsub("[^0-9.]", "", price)))
+#  #
+# # # # # listings
+# nylistings <- read.csv("C:\\Users\\Drew Duffy\\OneDrive\\Spring '25 MSBA\\Urban Analysis\\Final\\NYC\\nyclistings.csv.gz") %>%
+#   rename(listing_id = id) %>%
+#   select(-price, -maximum_nights, -minimum_nights)
+# 
+# all_ny <- merge(nycalendar_clean, nylistings, by = "listing_id")
+# 
+# all_ny_filter <- all_ny %>%
+#   mutate(year = year(date)) %>%
+#   filter(price >0) %>%
+#   select(-license, -calculated_host_listings_count_shared_rooms, -calculated_host_listings_count_private_rooms, -calculated_host_listings_count_entire_homes, -neighborhood_overview, -host_about, -host_url, -host_response_time, -host_response_rate, -host_acceptance_rate, -host_is_superhost, -host_thumbnail_url, -host_picture_url, -adjusted_price, -calendar_updated, -calendar_last_scraped)
+# 
+# 
+# all_ny <- all_ny %>%
+#   mutate(marathon_week = if_else(date >= ymd("2024-10-30") & date <= ymd("2024-11-06"), 1, 0))
+# 
+# column_sizes <- sapply(all_ny, object.size)
+# print(column_sizes)
+# 
+# all_ny <- all_ny %>%
+#   select(
+#     listing_id, date, available, price, minimum_nights, maximum_nights,host_id,
+#     neighbourhood, neighbourhood_cleansed,
+#     neighbourhood_group_cleansed, latitude, longitude, property_type, room_type,
+#     accommodates, bathrooms, bedrooms, beds, 
+#     has_availability, availability_30, availability_60, availability_90,
+#     availability_365, number_of_reviews, review_scores_rating,
+#     reviews_per_month, marathon_week
+#   )
+# 
+# saveRDS(all_ny, "all_ny.rds")
+
+zip("allny_rds.zip", "all_ny.rds")
+
+```
+# Data for Chicago
+  - Last Marathon Date: October 13, 2024
+
+```{r Chicago}
+
+all_chicago <- readRDS("all_chicago.rds")
+
+# calendar ""C:\Users\Drew Duffy\OneDrive\Spring '25 MSBA\Urban Analysis\Final\chicago\chicagocalendar.csv.gz"
+
+# chicagocal <- read.csv("C:\\Users\\Drew Duffy\\OneDrive\\Spring '25 MSBA\\Urban Analysis\\Final\\chicago\\chicagocal.csv.gz")
+# #
+# chicalendar_clean <- chicagocal %>%
+#   mutate(date = as.Date(date, format = "%Y-%m-%d"),
+#          available = ifelse(available == "t", 1, 0),
+#           price = as.numeric(gsub("[^0-9.]", "", price)))
+# 
+# # listings
+# 
+# chilistings <- read.csv("C:\\Users\\Drew Duffy\\OneDrive\\Spring '25 MSBA\\Urban Analysis\\Final\\chicago\\chicagolist.csv.gz") %>% 
+#   rename(listing_id = id) %>%
+#   select(-price, -maximum_nights, -minimum_nights)
+# #
+# all_chicago <- merge(chicalendar_clean, chilistings, by = "listing_id")
+# 
+# 
+# all_chicago <- all_chicago %>%
+#   mutate(marathon_week = if_else(date >= ymd("2024-10-09") & date <= ymd("2024-10-16"), 1, 0))
+# #
+# #
+# all_chicago <- all_chicago %>%
+#   select(
+#     listing_id, date, available, price, minimum_nights, maximum_nights, listing_url,
+#     name, description, picture_url, host_id,
+#     host_name, host_since, host_location, host_neighbourhood, host_listings_count,
+#     host_total_listings_count, neighbourhood, neighbourhood_cleansed,
+#     neighbourhood_group_cleansed, latitude, longitude, property_type, room_type,
+#     accommodates, bathrooms, bathrooms_text, bedrooms, beds, amenities,
+#     minimum_minimum_nights, maximum_minimum_nights, minimum_maximum_nights,
+#     maximum_maximum_nights, minimum_nights_avg_ntm, maximum_nights_avg_ntm,
+#     has_availability, availability_30, availability_60, availability_90,
+#     availability_365, number_of_reviews, review_scores_rating,
+#     review_scores_accuracy, review_scores_cleanliness, review_scores_checkin,
+#     review_scores_communication, review_scores_location, review_scores_value,
+#     reviews_per_month, marathon_week
+#   )
+# 
+# saveRDS(all_chicago, "all_chicago.rds")
+
+# zip("allchicago_rds.zip", "all_chicago.rds")
+
+
+```
+
+# Data for San Francisco
+  - Last Marathon Date: July 28, 2024
+
+```{r San Fran}
+
+all_sf <- readRDS("all_sf.rds")
+
+# calendar 
+# sfcalendar <- read.csv("C://Users/Drew Duffy/OneDrive/Spring '25 MSBA/Urban Analysis/Final/sf_analysis/sfcal.csv.gz")
+# #
+# sfcalendar_clean <- sfcalendar %>%
+#   mutate(date = as.Date(date, format = "%Y-%m-%d"),
+#          available = ifelse(available == "t", 1, 0),
+#           price = as.numeric(gsub("[^0-9.]", "", price)))
+# #  
+# # # listings "C:\Users\Drew Duffy\OneDrive\Spring '25 MSBA\Urban Analysis\Final\SANFAN_airbnb\listings.csv"
+# sflistings <- read.csv("C://Users/Drew Duffy/OneDrive/Spring '25 MSBA/Urban Analysis/Final/sf_analysis/listings.csv") %>% 
+#     rename(listing_id = id) %>% 
+#     select(-price, -maximum_nights, -minimum_nights)
+# # # 
+#  all_sf <- merge(sfcalendar_clean, sflistings, by = "listing_id")
+# 
+#   all_sf <- all_sf %>%
+#    mutate(marathon_week = if_else(date >= ymd("2024-07-24") & date <= ymd("2024-07-31"), 1, 0))
+# 
+#  all_sf <- all_sf %>%
+#   select(
+#     listing_id, date, available, price, minimum_nights, maximum_nights, listing_url,
+#     name, description, picture_url, host_id,
+#     host_name, host_since, host_location, host_neighbourhood, host_listings_count,
+#     host_total_listings_count, neighbourhood, neighbourhood_cleansed,
+#     neighbourhood_group_cleansed, latitude, longitude, property_type, room_type,
+#     accommodates, bathrooms, bathrooms_text, bedrooms, beds, amenities,
+#     minimum_minimum_nights, maximum_minimum_nights, minimum_maximum_nights,
+#     maximum_maximum_nights, minimum_nights_avg_ntm, maximum_nights_avg_ntm,
+#     has_availability, availability_30, availability_60, availability_90,
+#     availability_365, number_of_reviews, review_scores_rating,
+#     review_scores_accuracy, review_scores_cleanliness, review_scores_checkin,
+#     review_scores_communication, review_scores_location, review_scores_value,
+#     reviews_per_month, marathon_week
+#   )
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# saveRDS(all_sf, "all_sf.rds")
+# 
+# zip("allsf_rds.zip", "all_sf.rds")
+
+```
+
+
+# Data for Denver
+  - Last Marathon Date: May 19, 2024
+
+```{r Denver}
+all_denver <- readRDS("all_denver.rds")
+# # calendar "C:\Users\Drew Duffy\OneDrive\Spring '25 MSBA\Urban Analysis\Final\denver\denvercal.gz"
+# dencalendar <- read.csv("C://Users/Drew Duffy/OneDrive/Spring '25 MSBA/Urban Analysis/Final/denver/denvercal.csv.gz")
+# # #
+# dencalendar_clean <- dencalendar %>%
+#   mutate(date = as.Date(date, format = "%Y-%m-%d"),
+#          available = ifelse(available == "t", 1, 0),
+#           price = as.numeric(gsub("[^0-9.]", "", price)))
+# 
+# # # listings
+# denlistings <- read.csv("C://Users/Drew Duffy/OneDrive/Spring '25 MSBA/Urban Analysis/Final/denver/denverlist.csv.gz") %>%
+#   rename(listing_id = id) %>%
+#   select(-price, -maximum_nights, -minimum_nights)
+# #
+# all_denver <- merge(dencalendar_clean, denlistings, by = "listing_id")
+# 
+#  all_denver <- all_denver %>%
+#    mutate(marathon_week = if_else(date >= ymd("2024-05-15") & date <= ymd("2024-05-22"), 1, 0))
+# # #
+# # #
+# all_denver <- all_denver %>%
+#   select(
+#     listing_id, date, available, price, minimum_nights, maximum_nights, listing_url,
+#     name, description, picture_url, host_id,
+#     host_name, host_since, host_location, host_neighbourhood, host_listings_count,
+#     host_total_listings_count, neighbourhood, neighbourhood_cleansed,
+#     neighbourhood_group_cleansed, latitude, longitude, property_type, room_type,
+#     accommodates, bathrooms, bathrooms_text, bedrooms, beds, amenities,
+#     minimum_minimum_nights, maximum_minimum_nights, minimum_maximum_nights,
+#     maximum_maximum_nights, minimum_nights_avg_ntm, maximum_nights_avg_ntm,
+#     has_availability, availability_30, availability_60, availability_90,
+#     availability_365, number_of_reviews, review_scores_rating,
+#     review_scores_accuracy, review_scores_cleanliness, review_scores_checkin,
+#     review_scores_communication, review_scores_location, review_scores_value,
+#     reviews_per_month, marathon_week
+#   )
+# 
+# 
+# saveRDS(all_denver, "all_denver.rds")
+# # 
+# zip("alldenver_rds.zip", "all_denver.rds")
+```
+
+
+
+## Plotting AirBnbs by Neighborhoods for EDA
+
+# Denver
+
+```{r}
+
+denver_nbhoods <- st_read("C://Users/Drew Duffy/OneDrive/Spring '25 MSBA/Urban Analysis/Final/denver_neighborhoods.shp") %>% 
+  st_transform(crs = 4326)
+
+denver_bbox <- c(left = -105.11, bottom = 39.61432, right = -104.5996, top = 39.91418)
+
+denver_map <- get_stadiamap(denver_bbox, zoom = 11, maptype = "stamen_toner_lite")
+
+
+denver_abnb_byhood <- all_denver %>% 
+  group_by(neighbourhood_cleansed) %>% 
+  summarise(n_listings = n_distinct(listing_id))
+
+
+availability_den <- all_denver %>% 
+  filter(marathon_week == 1) %>% 
+  group_by(neighbourhood_cleansed) %>% 
+  summarise(n_available_nights = sum(available))
+
+
+hood_avail_den <- merge(denver_abnb_byhood, availability_den, by = "neighbourhood_cleansed")
+
+hood_avail_den <- hood_avail_den %>% 
+  mutate(avg_nights_avail_per_listing = n_available_nights/n_listings)
+
+denver_nbhoods <- denver_nbhoods %>%
+  left_join(hood_avail_den, by = c("NBHD_NAME" = "neighbourhood_cleansed"))
+
+
+denver_nbhoods <- denver_nbhoods %>%
+  left_join(denver_abnb_byhood, by = c("NBHD_NAME" = "neighbourhood_cleansed")) %>% 
+  filter(NBHD_ID != 40 & NBHD_ID != 60)
+
+ggmap(denver_map, darken = .2) + 
+  geom_sf(data = denver_nbhoods, inherit.aes = F,
+          aes(fill = n_listings.x), alpha = 0.8) +
+  scale_fill_gradient(low = "skyblue", high = "navyblue") +
+  labs(title = "Denver Neighborhoods by Number of Airbnb Listings")
+
+den_marathon_week_plot <- ggmap(denver_map, darken = .2) + 
+  geom_sf(data = denver_nbhoods, inherit.aes = F,
+          aes(fill = avg_nights_avail_per_listing), alpha = 0.8) +
+  scale_fill_gradient(low = "darkred", high = "yellow") +
+  labs(title = "Denver Neighborhoods by Average Number of Airbnb Nights Available", 
+       subtitle = "During the Week of Denver Marathon (May 19, 2024)")
+
+ggsave("den_marathonweek_plot.png", plot = den_marathon_week_plot, width = 800, height = 600, units = "px", dpi = 72)
+
+```
+
+- Boston
+```{r}
+bos_nbhoods <- st_read("C://Users/Drew Duffy/OneDrive/Spring '25 MSBA/Urban Analysis/Final/bpda_neighborhood_boundaries/BPDA_Neighborhood_Boundaries.shp") %>% 
+  st_transform(crs = 4326)
+
+
+boston_bbox <- c(left = -71.19125, bottom = 42.22791, right = -70.92278, top = 42.39698)
+
+
+boston_map <- get_stadiamap(boston_bbox, zoom = 11, maptype = "stamen_toner_lite")
+
+bos_abnb_byhood <- all_boston %>% 
+  group_by(neighbourhood_cleansed) %>% 
+  summarise(n_listings = n_distinct(listing_id)) 
+  
+availability_bos <- all_boston %>% 
+  filter(marathon_week == 1) %>% 
+  group_by(neighbourhood_cleansed) %>% 
+  summarise(n_available_nights = sum(available))
+
+
+hood_avail <- merge(bos_abnb_byhood, availability_bos, by = "neighbourhood_cleansed")
+
+hood_avail <- hood_avail %>% 
+  mutate(avg_nights_avail_per_listing = n_available_nights/n_listings)
+
+bos_nbhoods <- bos_nbhoods %>%
+  left_join(hood_avail, by = c("name" = "neighbourhood_cleansed"))
+
+
+bos_total_listings_plot <- ggmap(boston_map, darken = .2) + 
+  geom_sf(data = bos_nbhoods, inherit.aes = F,
+          aes(fill = n_listings), alpha = 0.8) +
+  scale_fill_gradient(low = "skyblue", high = "navyblue") +
+  labs(title = "Boston Neighborhoods by Number of Airbnb Listings")
+
+
+ggmap(boston_map, darken = .2) + 
+  geom_sf(data = bos_nbhoods, inherit.aes = F,
+          aes(fill = avg_nights_avail_per_listing), alpha = 0.8) +
+  scale_fill_gradient(low = "darkred", high = "yellow") +
+  labs(title = "Boston Neighborhoods by Average Number of Airbnb Nights Available", 
+       subtitle = "During the Week of Boston Marathon (April 15, 2024)")
+
+
+ggsave("bos_totallistings_plot.png", plot = bos_total_listings_plot, width = 800, height = 600, units = "px", dpi = 72)
+```
+- NYC
+```{r}
+nyc_nbhoods <- st_read("C://Users/Drew Duffy/OneDrive/Spring '25 MSBA/Urban Analysis/Final/nynta2020_25a/nynta2020.shp")  %>% 
+  st_transform(crs = 4326)
+
+
+ny_bbox <- c(left = -74.25559, bottom = 40.49613, right = -73.70001, top = 40.91553)
+
+
+nyc_map <- get_stadiamap(ny_bbox, zoom = 11, maptype = "stamen_toner_lite")
+
+nyc_abnb_byhood <- all_ny %>% 
+  group_by(neighbourhood_cleansed) %>% 
+  summarise(n_listings = n_distinct(listing_id))
+
+availability_nyc <- all_ny %>% 
+  filter(marathon_week == 1) %>% 
+  group_by(neighbourhood_cleansed) %>% 
+  summarise(n_available_nights = sum(available))
+
+hood_avail_ny <- merge(nyc_abnb_byhood, availability_nyc, by = "neighbourhood_cleansed")
+
+hood_avail_ny <- hood_avail_ny %>% 
+  mutate(avg_nights_avail_per_listing = n_available_nights/n_listings)
+
+nyc_nbhoods <- nyc_nbhoods %>%
+  left_join(hood_avail_ny, by = c("NTAName" = "neighbourhood_cleansed"))
+
+nyc_total_listings_plot <- ggmap(nyc_map, darken = .2) + 
+  geom_sf(data = nyc_nbhoods, inherit.aes = F,
+          aes(fill = n_listings), alpha = 0.8) +
+  scale_fill_gradient(low = "skyblue", high = "navyblue") +
+  labs(title = "New York City Neighborhoods by Number of Airbnb Listings")
+
+nyc_marathon_week_plot <- ggmap(nyc_map, darken = .2) + 
+  geom_sf(data = nyc_nbhoods, inherit.aes = F,
+          aes(fill = avg_nights_avail_per_listing), alpha = 0.8) +
+  scale_fill_gradient(low = "darkred", high = "yellow") +
+  labs(title = "New York City Neighborhoods by Average Number of Airbnb Nights Available", 
+       subtitle = "During the Week of NYC Marathon (November 3, 2024)")
+
+ggsave("nyc_marathonweek_plot.png", plot = nyc_marathon_week_plot, width = 800, height = 600, units = "px", dpi = 72)
+
+ggsave("nyc_listings_plot.png", plot = nyc_total_listings_plot, width = 800, height = 600, units = "px", dpi = 72)
+
+
+```
+
+- Chicago
+```{r}
+chicago_nbhoods <- st_read("C://Users/Drew Duffy/OneDrive/Spring '25 MSBA/Urban Analysis/Final/Chicago_Community_areas-shp/Chicago_Community_areas.shp")  %>% 
+  st_transform(crs = 4326)
+
+
+chi_bbox <- c(left = -87.94012, bottom = 41.64455, right = -87.52414, top = 42.02304)
+
+
+chi_map <- get_stadiamap(chi_bbox, zoom = 11, maptype = "stamen_toner_lite")
+
+all_chicago <- all_chicago %>%
+  mutate(neighbourhood_cleansed = toupper(neighbourhood_cleansed))
+
+chi_abnb_byhood <- all_chicago %>% 
+  group_by(neighbourhood_cleansed) %>% 
+  summarise(n_listings = n_distinct(listing_id))
+
+availability_chi <- all_chicago %>% 
+  filter(marathon_week == 1) %>% 
+  group_by(neighbourhood_cleansed) %>% 
+  summarise(n_available_nights = sum(available))
+
+chicago_nbhoods <- chicago_nbhoods %>%
+  left_join(chi_abnb_byhood, by = c("community" = "neighbourhood_cleansed"))
+
+
+
+
+hood_avail_chi <- merge(chi_abnb_byhood, availability_chi, by = "neighbourhood_cleansed")
+
+hood_avail_chi <- hood_avail_chi %>% 
+  mutate(avg_nights_avail_per_listing = n_available_nights/n_listings)
+
+chicago_nbhoods <- chicago_nbhoods %>%
+  left_join(hood_avail_chi, by = c("community" = "neighbourhood_cleansed"))
+
+
+chicago_png <- ggmap(chi_map, darken = .2) + 
+  geom_sf(data = chicago_nbhoods, inherit.aes = F,
+          aes(fill = n_listings.x), alpha = 0.8) +
+  scale_fill_gradient(low = "skyblue", high = "navyblue") +
+  labs(title = "Chicago Neighborhoods by Number of Airbnb Listings")
+
+
+chi_marathon_week_plot <- ggmap(chi_map, darken = .2) + 
+  geom_sf(data = chicago_nbhoods, inherit.aes = F,
+          aes(fill = avg_nights_avail_per_listing), alpha = 0.8) +
+  scale_fill_gradient(low = "darkred", high = "yellow") +
+  labs(title = "Chicago Neighborhoods by Average Number of Airbnb Nights Available", 
+       subtitle = "During the Week of Chicago Marathon (October 13, 2024)")
+
+
+ggsave("chicago_plot.png", plot = chicago_png, width = 800, height = 600, units = "px", dpi = 72)
+
+ggsave("chicago_marathonweek_plot.png", plot = chi_marathon_week_plot, width = 800, height = 600, units = "px", dpi = 72)
+```
+
+
+
+- SF
+```{r}
+
+sf_nbhoods <- st_read("C://Users/Drew Duffy/OneDrive/Spring '25 MSBA/Urban Analysis/Final/Analysis Neighborhoods - 2020 census tracts assigned to neighborhoods_20250227/geo_export_bf7d13cc-18fc-44f0-8165-b85b91057f68.shp")  %>% 
+  st_transform(crs = 4326)
+
+
+sf_bbox <- c(left = -122.55, bottom = 37.69307, right = -122.357, top = 37.8333)
+
+
+sf_map <- get_stadiamap(sf_bbox, zoom = 11, maptype = "stamen_toner_lite")
+
+sf_abnb_byhood <- all_sf %>% 
+  group_by(neighbourhood_cleansed, marathon_week) %>% 
+  summarise(n_listings = n_distinct(listing_id), 
+            price_per_night = mean(price))
+
+availability_sf <- all_sf %>% 
+  filter(marathon_week == 1) %>% 
+  group_by(neighbourhood_cleansed) %>% 
+  summarise(n_available_nights = sum(available))
+
+
+hood_avail_sf <- merge(sf_abnb_byhood, availability_sf, by = "neighbourhood_cleansed")
+
+hood_avail_sf <- hood_avail_sf %>% 
+  mutate(avg_nights_avail_per_listing = n_available_nights/n_listings)
+
+sf_nbhoods <- sf_nbhoods %>%
+  left_join(hood_avail_sf, by = c("neighborho" = "neighbourhood_cleansed"))
+
+sf_total_listings_plot <- ggmap(sf_map, darken = .2) + 
+  geom_sf(data = sf_nbhoods, inherit.aes = F,
+          aes(fill = n_listings), alpha = 0.8) +
+  scale_fill_gradient(low = "skyblue", high = "navyblue") +
+  labs(title = "San Francisco Neighborhoods by Number of Airbnb Listings")
+
+
+sf_marathon_week_plot <- ggmap(sf_map, darken = .2) + 
+  geom_sf(data = sf_nbhoods, inherit.aes = F,
+          aes(fill = avg_nights_avail_per_listing), alpha = 0.8) +
+  scale_fill_gradient(low = "darkred", high = "yellow") +
+  labs(title = "San Francisco Neighborhoods by Average Number of Airbnb Nights Available", 
+       subtitle = "During the Week of SF Marathon (July 28, 2024)")
+
+
+ggsave("sf_marathonweek_plot.png", plot = sf_marathon_week_plot, width = 800, height = 600, units = "px", dpi = 72)
+
+sf_total_listings_plot
+
+
+ggsave("sf_totallistings_plot.png", plot = sf_total_listings_plot, width = 800, height = 600, units = "px", dpi = 72)
+```
+
+
+```{r}
+cities <- c("Denver", "New York City", "San Francisco", "Chicago", "Boston")
+city_area <- c(154.9, 302.6, 46.9, 234, 48.4)
+
+city_table <- data.frame(City = cities, Area = city_area)
+
+city <- ggplot(city_table, aes(x = reorder(City, Area), y = Area)) +  
+  geom_col(fill = "steelblue") +
+  geom_text(aes(label = Area), vjust = -0.5) +
+  labs(title = "Land Area of Marathon Cities", x = "City", y = "Area (sq mi)") +
+  theme_bw()
+
+ggsave("city_areas.png", plot = city, width = 800, height = 600, units = "px", dpi = 72)
+```
